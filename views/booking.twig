@@ -1,0 +1,21 @@
+{% extends 'base.twig' %}
+
+{% block title %}
+
+Booking
+
+{% endblock %}
+
+{% block main %}
+
+<h1>Booking</h1>
+<div class="existing">
+    <h2>Update or Search Bookings &amp; Loans</h2>
+    <p>Click <a href="{{ url }}/index.php/bookingSearch">here</a> to update an active booking or search for a prior booking.</p>
+</div>
+<div class="create">
+    <h2>Book a Product for a Customer</h2>
+    <p>Click <a href="{{ url }}/index.php/bookingCreate">here</a> to create a new customer booking.</p>
+</div>
+
+{% endblock %}

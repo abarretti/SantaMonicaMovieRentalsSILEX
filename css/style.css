@@ -1,0 +1,221 @@
+/* HEADER STYLING*/
+header
+{
+    display: block;
+    height:150px;
+    background:#6eabe5;
+    background:url("../imgs/santaMonicaCrop.jpg");
+    background-repeat:no-repeat;
+    background-size:100%;
+    padding:10px;
+}
+
+header h1
+{
+    color:#FFFFFF;
+    font-size: 180%;
+    text-shadow:2px 0 black;
+    text-align:left;
+    font-family:"Comic Sans MS";
+}
+
+header h2
+{
+    color:#FFFFFF;
+    font-size: 100%;
+    font-family:"Comic Sans MS";
+    text-shadow:2px 0 black;
+    text-align:left;
+}
+
+/* Navigation */
+
+nav div
+{
+    display: inline-block;
+    width:10%;
+    margin:0.25% 2% 2%;
+    /*border: 2px solid;*/
+}
+
+nav a
+{
+    float: left;
+    display: inline-block;
+    text-decoration: none;
+    text-align:center;
+    padding: 10px 20px 10px 20px;
+    color:#000000;
+    background-color:rgba(255,255,255,.7);
+    width: 10%;
+    border:1px solid;
+    margin:0.25% -1.25% 0.5% 0%;
+}
+
+.active
+{
+    background:#FFFFFF;
+    color: #9400cc;
+}
+
+nav a:hover
+{
+    background:#FFFFFF;
+}
+
+.dropdown a
+{
+    width:100%;
+}
+
+div.dropdown-content 
+{
+    display: none;
+    position: absolute;
+    margin-left:-.05%;
+    margin-top:3.3%;
+    width: 9.55%;
+    z-index: 1;
+    /*border: 2px solid;*/
+}
+
+/* Links inside the dropdown */
+.dropdown-content a 
+{
+    color: #000000;
+    text-decoration: none;
+    margin-top:5%;
+    display: inline-block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover 
+{
+    background-color:#FFFFFF
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content 
+{
+    display: block;
+}
+
+/* BODY STYLING */
+body
+{
+    margin:10px;
+    padding:10px;
+    font-family:sans-serif;
+}
+
+.header 
+{
+    width: 300px;
+    height: 25px;
+    background-color: #5A68A5;
+    border-radius: 10px;
+}
+
+h1 
+{
+    font-family: Verdana, sans-serif;
+    font-size: 24px;
+    text-align: center;
+    color: #7b50b1;
+}
+
+h2 
+{
+    font-size:20px;
+}
+
+p 
+{
+    font-family: Tahoma, sans-serif;
+}
+
+li 
+{
+    font-family: Tahoma, sans-serif;
+    list-style-type: square;
+}
+
+/*Home Page STYLING*/
+div.newArrivals
+{
+    float:left;
+    width:35%;
+    text-align:left;
+    margin-bottom:5%;
+}
+
+div.announcements
+{
+    float:right;
+    width:60%;
+    text-align:left;
+    margin-bottom:5%;
+}
+
+/*Customer & Inventory Styling*/
+div.existing
+{
+    float:left;
+    width:45%;
+    text-align:center;
+    margin-bottom:5%;
+}
+
+div.create
+{
+    float:right;
+    width:45%;
+    text-align:center;
+    margin-bottom:5%;
+}
+
+/* Form Styling */
+input 
+{
+    width: 280px;
+}
+
+form
+{
+    margin-bottom:5%;
+}
+
+.error 
+{
+    color: red;
+}
+
+.notice
+{
+    color: #3756dd;
+}
+
+#bookingOne
+{
+    display:none;
+}
+
+/* FOOTER */
+footer 
+{
+    clear:both;
+    border:1px solid;
+    text-align:right;
+    padding:35px;
+    color: #FFFFFF;
+    background: #530594;
+    background:url("../imgs/santaMonicaCrop.jpg");
+    background-repeat:no-repeat;
+    background-position:center bottom;
+    background-size:100%;
+}
+
+footer img 
+{
+    height:30px;
+}   

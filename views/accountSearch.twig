@@ -1,0 +1,124 @@
+{% extends 'base.twig' %}
+
+{% block title %}
+
+Account Search
+
+{% endblock %}
+
+{% block main %}
+
+    {{ returnContent | raw }}
+
+        <h1>Search Customer Accounts</h1>
+        <h2 class="notice">* field is subject to input restrictions.</h2>
+        <form action= "{{ url }}/index.php/accountSearch" autocomplete="on" method="get">
+            <fieldset>
+                <legend>Search by Personal Information</legend>
+                First Name: 
+                <input type="text" name="firstName" value="{{ firstName }}">
+                <span class="notice">* {{ firstNameError }}</span>
+                <br><br>
+                Last Name: 
+                <input type="text" name="lastName" value="{{ lastName }}">  
+                <span class="notice">* {{ lastNameError }}</span>
+                <br><br>
+                Date of Birth:
+                <input type="date" name="dateOfBirth" value="{{ dateOfBirth }}">
+                <br><br>
+                Gender:
+                <input type="radio" name="gender" value="M">Male
+                <input type="radio" name="gender" value="F">Female
+                <br><br>
+            </fieldset>
+                <input type="submit" name="submitPersonal" value="Submit">
+                <input type="reset">
+        </form>
+        <form action= "{{ url }}/index.php/accountSearch" autocomplete="on" method="get">
+            <fieldset>
+                <legend>Search by Address Information</legend>
+                Address 1: 
+                <input type="text" name="address1" value="{{ address1 }}">  
+                <span class="notice">* {{ address1Error }}</span>
+                <br><br>
+                City: 
+                <input type="text" name="city" value="{{ city }}">  
+                <span class="notice">* {{ cityError }}</span>
+                <br><br>
+                State:
+                <select name="state">
+                <option value="" {% if state=="" %} 'selected' {% endif %}></option>
+                <option value="AL" {% if state=="AL" %} 'selected' {% endif %}>Alabama</option>
+                <option value="AK" {% if state=="AK" %} 'selected' {% endif %}>Alaska</option>
+                <option value="AZ" {% if state=="AZ" %} 'selected' {% endif %}>Arizona</option>
+                <option value="AR" {% if state=="AR" %} 'selected' {% endif %}>Arkansas</option>
+                <option value="CA" {% if state=="CA" %} 'selected' {% endif %}>California</option>
+                <option value="CO" {% if state=="CO" %} 'selected' {% endif %}>Colorado</option>
+                <option value="CT" {% if state=="CT" %} 'selected' {% endif %}>Connecticut</option>
+                <option value="DE" {% if state=="DE" %} 'selected' {% endif %}>Delaware</option>
+                <option value="DC" {% if state=="DC" %} 'selected' {% endif %}>District Of Columbia</option>
+                <option value="FL" {% if state=="FL" %} 'selected' {% endif %}>Florida</option>
+                <option value="GA" {% if state=="GA" %} 'selected' {% endif %}>Georgia</option>
+                <option value="HI" {% if state=="HI" %} 'selected' {% endif %}>Hawaii</option>
+                <option value="ID" {% if state=="ID" %} 'selected' {% endif %}>Idaho</option>
+                <option value="IL" {% if state=="IL" %} 'selected' {% endif %}>Illinois</option>
+                <option value="IN" {% if state=="IN" %} 'selected' {% endif %}>Indiana</option>
+                <option value="IA" {% if state=="IA" %} 'selected' {% endif %}>Iowa</option>
+                <option value="KS" {% if state=="KS" %} 'selected' {% endif %}>Kansas</option>
+                <option value="KY" {% if state=="KY" %} 'selected' {% endif %}>Kentucky</option>
+                <option value="LA" {% if state=="LA" %} 'selected' {% endif %}>Louisiana</option>
+                <option value="ME" {% if state=="ME" %} 'selected' {% endif %}>Maine</option>
+                <option value="MD" {% if state=="MD" %} 'selected' {% endif %}>Maryland</option>
+                <option value="MA" {% if state=="MA" %} 'selected' {% endif %}>Massachusetts</option>
+                <option value="MI" {% if state=="MI" %} 'selected' {% endif %}>Michigan</option>
+                <option value="MN" {% if state=="MN" %} 'selected' {% endif %}>Minnesota</option>
+                <option value="MS" {% if state=="MS" %} 'selected' {% endif %}>Mississippi</option>
+                <option value="MO" {% if state=="MO" %} 'selected' {% endif %}>Missouri</option>
+                <option value="MT" {% if state=="MT" %} 'selected' {% endif %}>Montana</option>
+                <option value="NE" {% if state=="NE" %} 'selected' {% endif %}>Nebraska</option>
+                <option value="NV" {% if state=="NV" %} 'selected' {% endif %}>Nevada</option>
+                <option value="NH" {% if state=="NH" %} 'selected' {% endif %}>New Hampshire</option>
+                <option value="NJ" {% if state=="NJ" %} 'selected' {% endif %}>New Jersey</option>
+                <option value="NM" {% if state=="NM" %} 'selected' {% endif %}>New Mexico</option>
+                <option value="NY" {% if state=="NY" %} 'selected' {% endif %}>New York</option>
+                <option value="NC" {% if state=="NC" %} 'selected' {% endif %}>North Carolina</option>
+                <option value="ND" {% if state=="ND" %} 'selected' {% endif %}>North Dakota</option>
+                <option value="OH" {% if state=="OH" %} 'selected' {% endif %}>Ohio</option>
+                <option value="OK" {% if state=="OK" %} 'selected' {% endif %}>Oklahoma</option>
+                <option value="OR" {% if state=="OR" %} 'selected' {% endif %}>Oregon</option>
+                <option value="PA" {% if state=="PA" %} 'selected' {% endif %}>Pennsylvania</option>
+                <option value="RI" {% if state=="RI" %} 'selected' {% endif %}>Rhode Island</option>
+                <option value="SC" {% if state=="SC" %} 'selected' {% endif %}>South Carolina</option>
+                <option value="SD" {% if state=="SD" %} 'selected' {% endif %}>South Dakota</option>
+                <option value="TN" {% if state=="TN" %} 'selected' {% endif %}>Tennessee</option>
+                <option value="TX" {% if state=="TX" %} 'selected' {% endif %}>Texas</option>
+                <option value="UT" {% if state=="UT" %} 'selected' {% endif %}>Utah</option>
+                <option value="VT" {% if state=="VT" %} 'selected' {% endif %}>Vermont</option>
+                <option value="VA" {% if state=="VA" %} 'selected' {% endif %}>Virginia</option>
+                <option value="WA" {% if state=="WA" %} 'selected' {% endif %}>Washington</option>
+                <option value="WV" {% if state=="WV" %} 'selected' {% endif %}>West Virginia</option>
+                <option value="WI" {% if state=="WI" %} 'selected' {% endif %}>Wisconsin</option>
+                <option value="WY" {% if state=="WY" %} 'selected' {% endif %}>Wyoming</option>
+                </select>
+                <br><br>
+                Phone Number:
+                <input type="tel" name="phoneNumber" value="{{ phoneNumber }}">
+                <span class="notice">* {{ phoneNumberError }}</span>
+                <br><br>
+            </fieldset>
+                <input type="submit" name="submitAddress" value="Submit">
+                <input type="reset">
+        </form>
+        <form action= "{{ url }}/index.php/accountSearch" autocomplete="on" method="get">
+            <fieldset>
+                <legend>Search by E-Mail Address</legend>
+                E-Mail Address:
+                <input type="text" name="eMail" value="{{ eMail }}">
+                <span class="notice">* {{ eMailError }}</span>
+                <br><br>
+            </fieldset>
+                <input type="submit" name="submitEMail" value="Submit">
+                <input type="reset">
+        </form>
+
+{% endblock %}

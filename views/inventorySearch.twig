@@ -1,0 +1,47 @@
+{% extends 'base.twig' %}
+
+{% block title %}
+
+Inventory Search
+
+{% endblock %}
+
+{% block main %}
+        
+        {{ returnContent | raw }}
+    
+        <h1>Search Inventory</h1>
+        <h2 class="notice">* field is subject to input restrictions.</h2>
+        <form action= "{{ url }}/index.php/inventorySearch" autocomplete="on" method="get">
+            <fieldset>
+                <legend>Search by Inventory or Product Information</legend>
+                SKU Number: 
+                <input type="text" name="sKUNumber" value="{{ sKUNumber }}">
+                <span class="notice">* {{ sKUNumberError }}</span>
+                <br><br>
+                Product Name: 
+                <input type="text" name="productName" value="{{ productName }}">   
+                <span class="notice">* {{ productNameError }}</span>
+                <br><br>
+            </fieldset>
+            <input type="submit" name="submitSKUProduct" value="Submit">
+            <input type="reset">
+        </form>
+        <form action= "{{ url }}/index.php/inventorySearch" autocomplete="on" method="get">
+            <fieldset>
+            <legend>Search by Production Company Name or Genre</legend>
+                Production Company Name:
+                <select name="productionCompanyName">
+                <option value="" {{ productionCompanyName }}></option>
+                {{ companyNames | raw }}
+                </select>
+                <br><br>
+                Genre:<br>
+                {{ genres | raw }}
+                <br><br>
+            </fieldset>
+                <input type="submit" name="submitProductionGenre" value="Submit">
+                <input type="reset">
+        </form>
+
+{% endblock %}

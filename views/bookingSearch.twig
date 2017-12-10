@@ -1,0 +1,77 @@
+{% extends 'base.twig' %}
+
+{% block title %}
+
+Booking Search
+
+{% endblock %}
+
+{% block main %}
+
+    {{ returnContent | raw }}
+
+    <h1>Return Inventory Item(s)</h1>
+        <form action= "{{ url }}/index.php/bookingSearch" autocomplete="on" method="get">
+            <fieldset>
+                <legend>Inventory</legend>
+                {{ bookingInventory | raw }}
+            <input type="submit" name="addItem" value="Add Item">
+            <input type="submit" name="removeItem" value="Remove Item">
+            </fieldset>
+      <fieldset>
+        <legend>Return Date</legend>
+        <input type="date" name="returnDate" value="{{ returnDate }}">
+        <span class="error">* {{ returnDateError }}</span>
+      </fieldset>
+            <input type="submit" name="submitReturn" value="Submit">
+            <input type="reset">
+        </form>
+
+        <h2>Search Outstanding Bookings by Customer Information</h2>
+        <h2 class="notice">* field is subject to input restrictions.</h2>
+        <form action= "{{ url }}/index.php/bookingSearch" autocomplete="on" method="get">
+            <fieldset>
+                <legend>Search by Personal Information</legend>
+                Last Name: 
+                <input type="text" name="lastName" value="{{ lastName }}">  
+                <span class="notice">* {{ lastNameError }}</span>
+                <br><br>
+                Date of Birth:
+                <input type="date" name="dateOfBirth" value="{{ dateOfBirth }}">
+                <br><br>
+                Address 1: 
+                <input type="text" name="address1" value="{{ address1 }}">  
+                <span class="notice">* {{ address1Error }}</span>
+                <br><br>
+                Phone Number:
+                <input type="tel" name="phoneNumber" value="{{ phoneNumber }}">
+                <span class="notice">* {{ phoneNumberError }}</span>
+                <br><br>
+            </fieldset>
+            <input type="submit" name="submitCustomer" value="Submit">
+            <input type="reset">
+        </form>
+
+        <h2>Search Outstanding Bookings by Inventory Information</h2>
+        <h2 class="notice">* field is subject to input restrictions.</h2>
+        <form action= "{{ url }}/index.php/bookingSearch" autocomplete="on" method="get">
+            <fieldset>
+                <legend>Search by Inventory or Product Information</legend>
+                Barcode Number: 
+                <input type="text" name="barCodeNumber" value="{{ barCodeNumber }}">
+                <span class="notice">* {{ barCodeNumberError }}</span>
+                <br><br>
+                SKU Number: 
+                <input type="text" name="sKUNumber" value="{{ sKUNumber }}">
+                <span class="notice">* {{ sKUNumberError }}</span>
+                <br><br>
+                Product Name: 
+                <input type="text" name="productName" value="{{ productName }}">   
+                <span class="notice">* {{ productNameError }}</span>
+                <br><br>
+            </fieldset>
+            <input type="submit" name="submitProduct" value="Submit">
+            <input type="reset">
+        </form>
+
+{% endblock %}

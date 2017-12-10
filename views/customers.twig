@@ -1,0 +1,21 @@
+{% extends 'base.twig' %}
+
+{% block title %}
+
+Customers
+
+{% endblock %}
+
+{% block main %}
+
+<h1>Customers</h1>
+<div class="existing">
+    <h2>Find Existing Customer Account</h2>
+    <p>Click <a href="{{ url }}/index.php/accountSearch">here</a> to search for or change an existing customer account.</p>
+</div>
+<div class="create">
+    <h2>Create New Customer Account</h2>
+    <p>Click <a href="{{ url }}/index.php/accountCreate">here</a> to create a new customer account.</p>
+</div>
+
+{% endblock %}

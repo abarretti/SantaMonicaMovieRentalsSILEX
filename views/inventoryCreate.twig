@@ -1,0 +1,62 @@
+{% extends 'base.twig' %}
+
+{% block title %}
+
+Inventory Create
+
+{% endblock %}
+
+{% block main %}
+
+{{ returnContent | raw }}
+
+        <h1>Create Inventory/Product</h1>
+        <h2 class="error">* required field.</h2>
+        <form action= "{{ url }}/index.php/inventoryCreate" autocomplete="on" method="get">
+            <fieldset>
+                <legend>Product Information</legend>
+                SKU Number:
+                <input type="text" name="sKUNumber" value="{{ sKUNumber }}">   
+                <span class="error">* {{ sKUNumberError }}</span>
+                <br><br>
+                Product Name: 
+                <input type="text" name="productName" value="{{ productName }}">   
+                <span class="error">* {{ productNameError }}</span>
+                <br><br>
+                Production Company Name: 
+                <select name="productionCompanyName">
+                {{ companyNames | raw }}
+                </select>
+                <span class="error">* {{ productionCompanyNameError }}</span>
+                <br><br>
+                Product Genres:<br>
+                {{ genres | raw }}
+                <span class="error">* {{ genreError }}</span>
+                <br>
+            </fieldset>
+            <fieldset>
+                <legend>Inventory Information</legend>
+                Barcode Number:
+                <input type="text" name="barCodeNumber" value="{{ barCodeNumber }}">   
+                <span class="error">* {{ barCodeNumberError }}</span>
+                <br><br>
+                Date Acquired:
+                <input type="date" name="dateAcquired" value="{{ dateAcquired }}">
+                <span class="error">* {{ dateAcquiredError }}</span>
+                <br><br>
+                Condition:
+                <select name="condition">
+                    <option value="Excellent" {% if condition =="Excellent" %} 'selected' {% endif %}>Excellent</option>
+                    <option value="Very Good" {% if condition =="Very Good" %} 'selected' {% endif %}>Very Good</option>
+                    <option value="Good" {% if condition =="Good" %} 'selected' {% endif %}>Good</option>
+                    <option value="Fair" {% if condition =="Fair" %} 'selected' {% endif %}>Fair</option>
+                    <option value="Poor" {% if condition =="Poor" %} 'selected' {% endif %}>Poor</option>
+                    <option value="Very Poor" {% if condition =="Very Poor" %} 'selected' {% endif %}>Very Poor</option>
+                </select>
+                <span class="error">* {{ conditionError }}</span>
+            </fieldset>
+            <input type="submit" name="submitInventoryCreate" value="Submit">
+            <input type="reset">
+        </form> 
+
+{% endblock %}
