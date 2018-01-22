@@ -1,5 +1,7 @@
 <?php namespace SMMRSite\Models\BookingModels;
 
+use SMMRSite\DAOs\BookingDAOClass;
+
 class BookingClass
 {
 	//Attributes
@@ -33,8 +35,20 @@ class BookingClass
 	private $barCodeNumber10Err;
 	private $bookingDateErr;
 	private $returnDateErr;
+    private $returnBookingErr;
+    private $bookingSearchErr;
+    private $createBookingErr;
+    private $bookingCustomerErr;
+    private $bookingInventoryErr;
 
-	public function __construct($bookingEMailAddress, $inventoryCount, $barCodeNumber1, $barCodeNumber2, $barCodeNumber3, $barCodeNumber4, $barCodeNumber5, $barCodeNumber6, $barCodeNumber7, $barCodeNumber8, $barCodeNumber9, $barCodeNumber10, $bookingDate, $returnDate, $bookingEMailAddressErr,$barCodeNumberDuplicateErr, $barCodeNumber1Err, $barCodeNumber2Err, $barCodeNumber3Err, $barCodeNumber4Err, $barCodeNumber5Err, $barCodeNumber6Err, $barCodeNumber7Err, $barCodeNumber8Err, $barCodeNumber9Err, $barCodeNumber10Err, $bookingDateErr, $returnDateErr)
+    //Output Attributes
+    private $returnBookingOutput;
+    private $bookingSearchArray;
+    private $createBookingOutput;
+    private $bookingCustomerArray;
+    private $bookingInventoryArray;
+
+	public function __construct($bookingEMailAddress, $inventoryCount, $barCodeNumber1, $barCodeNumber2, $barCodeNumber3, $barCodeNumber4, $barCodeNumber5, $barCodeNumber6, $barCodeNumber7, $barCodeNumber8, $barCodeNumber9, $barCodeNumber10, $bookingDate, $returnDate, $bookingEMailAddressErr,$barCodeNumberDuplicateErr, $barCodeNumber1Err, $barCodeNumber2Err, $barCodeNumber3Err, $barCodeNumber4Err, $barCodeNumber5Err, $barCodeNumber6Err, $barCodeNumber7Err, $barCodeNumber8Err, $barCodeNumber9Err, $barCodeNumber10Err, $bookingDateErr, $returnDateErr, $returnBookingErr, $bookingSearchErr, $createBookingErr, $bookingCustomerErr, $bookingInventoryErr, $returnBookingOutput, $bookingSearchArray, $createBookingOutput, $bookingCustomerArray, $bookingInventoryArray)
 	{
 		$this->bookingEMailAddress=$bookingEMailAddress;
 		$this->inventoryCount=$inventoryCount;
@@ -65,6 +79,17 @@ class BookingClass
 		$this->barCodeNumber10Err=$barCodeNumber10Err;
 		$this->bookingDateErr=$bookingDateErr;
 		$this->returnDateErr=$returnDateErr;
+        $this->returnBookingErr=$returnBookingErr;
+        $this->bookingSearchErr=$bookingSearchErr;
+        $this->createBookingErr=$createBookingErr;
+        $this->bookingCustomerErr= $bookingCustomerErr;
+        $this->bookingInventoryErr= $bookingInventoryErr;
+
+        $this->returnBookingOutput=$returnBookingOutput;
+        $this->bookingSearchArray=$bookingSearchArray;
+        $this->createBookingOutput=$createBookingOutput;
+        $this->bookingCustomerArray= $bookingCustomerArray;
+        $this->bookingInventoryArray= $bookingInventoryArray;
 	}
 
 	public function test_input($data) 
@@ -134,10 +159,10 @@ class BookingClass
 
 	public function getBookingInventory($inventoryCount)
 	{
-		$bookingInventory="";
+		$bookingInventory=array();
 		for($i=1;$i<=$inventoryCount;$i++)
 		{
-			$bookingInventory.="Inventory Barcode Number: <input type='text' name='barCodeNumber".$i."' value='".$this->getBarCodeNumber($i)."'><span class='error'> *".$this->getBarCodeNumberErr($i)."</span><br><br>";
+			array_push($bookingInventory,array("index"=>$i, "barCodeNumber"=> $this->getBarCodeNumber($i), "barCodeNumberErr"=> $this->getBarCodeNumberErr($i)));
 		}
 		return $bookingInventory;
 	}
@@ -150,8 +175,9 @@ class BookingClass
 		
 		if (in_array($barCodeNumber, $barCodeNumbers))
 		{
-			echo "<h2 style='color:red;'>Barcode is already selected</h2>";
-		}
+	       $this->bookingSearchErr="Barcode is already selected";
+            return;
+        }
 
 		else
 		{
@@ -536,7 +562,7 @@ class BookingClass
 		//Checks for Repeating Barcodes
 		if (count(array_unique($notNullBarCodeNumbers))<count($notNullBarCodeNumbers))
 		{
-			$this->barCodeNumberDuplicateErr="<h2 style='color:red;'>A barcode has been selected more than once</h2>";
+			$this->barCodeNumberDuplicateErr="A barcode has been selected more than once";
 		}
 		else
 		{
@@ -813,6 +839,106 @@ class BookingClass
 		return $this->returnDateErr;
 	}
 
+    public function setReturnBookingErr($returnBookingErr)
+    {
+        $this->returnBookingErr=$returnBookingErr;
+    }
+
+    public function getReturnBookingErr()
+    {
+        return $this->returnBookingErr;
+    }
+
+    public function setReturnBookingOutput($returnBookingOutput)
+    {
+        $this->returnBookingOutput=$returnBookingOutput;
+    }
+
+    public function getReturnBookingOutput()
+    {
+        return $this->returnBookingOutput;
+    }
+
+    public function setBookingSearchArray($bookingSearchArray)
+    {
+        $this->bookingSearchArray=$bookingSearchArray;
+    }
+
+    public function getBookingSearchArray()
+    {
+        return $this->bookingSearchArray;
+    }
+
+    public function setBookingSearchErr($bookingSearchErr)
+    {
+        $this->bookingSearchErr=$bookingSearchErr;
+    }
+
+    public function getBookingSearchErr()
+    {
+        return $this->bookingSearchErr;
+    }
+
+    public function setCreateBookingErr($createBookingErr)
+    {
+        $this->createBookingErr=$createBookingErr;
+    }
+
+    public function getCreateBookingErr()
+    {
+        return $this->createBookingErr;
+    }
+
+    public function setCreateBookingOutput($createBookingOutput)
+    {
+        $this->createBookingOutput=$createBookingOutput;
+    }
+
+    public function getCreateBookingOutput()
+    {
+        return $this->createBookingOutput;
+    }
+
+    public function setBookingCustomerArray($bookingCustomerArray)
+    {
+        $this->bookingCustomerArray=$bookingCustomerArray;
+    }
+
+    public function getBookingCustomerArray()
+    {
+        return $this->bookingCustomerArray;
+    }
+
+    public function setBookingCustomerErr($bookingCustomerErr)
+    {
+        $this->bookingCustomerErr=$bookingCustomerErr;
+    }
+
+    public function getBookingCustomerErr()
+    {
+        return $this->bookingCustomerErr;
+    }
+
+    public function setBookingInventoryArray($bookingInventoryArray)
+    {
+        $this->bookingInventoryArray=$bookingInventoryArray;
+    }
+
+    public function getBookingInventoryArray()
+    {
+        return $this->bookingInventoryArray;
+    }
+
+    public function setBookingInventoryErr($bookingInventoryErr)
+    {
+        $this->bookingInventoryErr=$bookingInventoryErr;
+    }
+
+    public function getBookingInventoryErr()
+    {
+        return $this->bookingInventoryErr;
+    }
+
 	//Validation Methods
 	public function formSubmitBookingCheck($eMail, $eMailErr, $barCodeNumber1, $bookingDate, $bookingDateErr, $barCodeNumberDuplicateErr, $barCodeNumber1Err, $barCodeNumber2Err, $barCodeNumber3Err, $barCodeNumber4Err, $barCodeNumber5Err, $barCodeNumber6Err, $barCodeNumber7Err, $barCodeNumber8Err, $barCodeNumber9Err, $barCodeNumber10Err)
 	{
@@ -841,4 +967,4 @@ class BookingClass
 }
 ?>
 
-<!-- php Desktop/PHP/SantaMonicaMovieRentals/class/bookingClass.php -->
+<!-- php Desktop/PHP/SantaMonicaMovieRentalsSILEX/app/SMMRSite/Models/BookingModels/bookingClass.php -->

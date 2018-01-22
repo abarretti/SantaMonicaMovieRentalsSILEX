@@ -1,7 +1,7 @@
 <?php namespace SMMRSite\Controllers\InventoryControllers;
 
 use SMMRSite\Models\InventoryModels\InventoryClass;
-use SMMRSite\Models\InventoryModels\InventoryDAOClass;
+use SMMRSite\DAOs\InventoryDAOClass;
 
 class InventorySearchController
 {
@@ -34,12 +34,12 @@ class InventorySearchController
 
         if (isset($_GET["submitSKUProduct"]) and $this->inventory->formInventorySearchCheck($this->inventory->getSKUNumberErr(), $this->inventory->getProductNameErr())=="FORM COMPLETE")
         {
-          return $this->inventoryDAO->productInventoryQuery($this->inventory->getSKUNumber(), $this->inventory->getProductName());
+          $this->inventoryDAO->productInventoryQuery($this->inventory, $this->inventory->getSKUNumber(), $this->inventory->getProductName());
         }
         
         if (isset($_GET["submitProductionGenre"]))
         {
-          return $this->inventoryDAO->companyGenreQuery($this->inventory->getProductionCompanyName(), $this->inventory->getAction(), $this->inventory->getChildren(), $this->inventory->getComedy(), $this->inventory->getDocumentary(), $this->inventory->getDrama(), $this->inventory->getHorror(), $this->inventory->getMusicals(), $this->inventory->getRomance(), $this->inventory->getScienceFiction(), $this->inventory->getThriller());
+          $this->inventoryDAO->companyGenreQuery($this->inventory, $this->inventory->getProductionCompanyName(), $this->inventory->getAction(), $this->inventory->getChildren(), $this->inventory->getComedy(), $this->inventory->getDocumentary(), $this->inventory->getDrama(), $this->inventory->getHorror(), $this->inventory->getMusicals(), $this->inventory->getRomance(), $this->inventory->getScienceFiction(), $this->inventory->getThriller());
         }
     }
   	}//functionClose

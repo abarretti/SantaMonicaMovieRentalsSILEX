@@ -6,11 +6,11 @@ date_default_timezone_set("America/New_York");
 require_once __DIR__ . '/vendor/autoload.php';
 
 use SMMRSite\Models\CustomerModels\CustomerClass;
-use SMMRSite\Models\CustomerModels\CustomerDAOClass;
 use SMMRSite\Models\InventoryModels\InventoryClass;
-use SMMRSite\Models\InventoryModels\InventoryDAOClass;
 use SMMRSite\Models\BookingModels\BookingClass;
-use SMMRSite\Models\BookingModels\BookingDAOClass;
+use SMMRSite\DAOs\CustomerDAOClass;
+use SMMRSite\DAOs\InventoryDAOClass;
+use SMMRSite\DAOs\BookingDAOClass;
 use SMMRSite\Controllers\BookingControllers\BookingCreateController;
 use SMMRSite\Controllers\BookingControllers\BookingSearchController;
 use SMMRSite\Controllers\CustomerControllers\AccountCreateController;
@@ -46,15 +46,18 @@ $app->get('/inventorySearch', function () use ($app, $url, $request) {
     $inventoryDAO=  new InventoryDAOClass();
     $inventorySearchController= new InventorySearchController($inventory, $inventoryDAO);
 
+    $inventorySearchController->searchRecord();
+
         return $app['twig']->render('inventorySearch.twig', ['url'=>$url,
-        'returnContent'=>$inventorySearchController->searchRecord(),
+        'inventoryInformationArray'=>$inventory->getInventoryInformationArray(),
+        'inventoryInformationError'=>$inventory->getInventoryInformationErr(),
         'sKUNumber'=>$inventory->getSKUNumber(),
         'sKUNumberError'=>$inventory->getSKUNumberErr(),
         'productName'=>$inventory->getProductName(),
         'productNameError'=>$inventory->getProductNameErr(),
         'productionCompanyName'=>$inventory->getProductionCompanyName(),
-        'companyNames'=>$inventoryDAO->getCompanyNames($inventory->getProductionCompanyName()),
-        'genres'=>$inventoryDAO->getGenres($inventory->getAction(), $inventory->getChildren(), $inventory->getComedy(), $inventory->getDocumentary(), $inventory->getDrama(), $inventory->getHorror(), $inventory->getMusicals(), $inventory->getRomance(), $inventory->getScienceFiction(), $inventory->getThriller())
+        'companyNames'=>$inventory->getCompanyNamesArray($inventoryDAO),
+        'genres'=>$inventory->getGenres($inventoryDAO)
         ]);
     });
 
@@ -63,15 +66,19 @@ $app->get('/inventoryCreate', function () use ($app, $url, $request) {
         $inventoryDAO= new InventoryDAOClass();
         $inventoryCreateController= new InventoryCreateController($inventory, $inventoryDAO);
 
+        $inventoryCreateController->insertRecord();
+
         return $app['twig']->render('inventoryCreate.twig', ['url'=>$url,
-        'returnContent'=>$inventoryCreateController->insertRecord(),
+        'createInventoryError'=>$inventory->getCreateInventoryErr(),
+        'createInventoryOutput'=>$inventory->getCreateInventoryOutput(),
         'sKUNumber'=>$inventory->getSKUNumber(),
         'sKUNumberError'=>$inventory->getSKUNumberErr(),
         'productName'=>$inventory->getProductName(),
         'productNameError'=>$inventory->getProductNameErr(),
-        'companyNames'=>$inventoryDAO->getCompanyNames($inventory->getProductionCompanyName()),
+        'companyNames'=>$inventory->getCompanyNamesArray($inventoryDAO),
+        'productionCompanyName'=>$inventory->getProductionCompanyName(),
         'productionCompanyNameError'=>$inventory->getProductionCompanyNameErr(),
-        'genres'=>$inventoryDAO->getGenres($inventory->getAction(), $inventory->getChildren(), $inventory->getComedy(), $inventory->getDocumentary(), $inventory->getDrama(), $inventory->getHorror(), $inventory->getMusicals(), $inventory->getRomance(), $inventory->getScienceFiction(), $inventory->getThriller()),
+        'genres'=>$inventory->getGenres($inventoryDAO),
         'genreError'=>$inventory->getGenreErr(),
         'barCodeNumber'=>$inventory->getBarCodeNumber(),
         'barCodeNumberError'=>$inventory->getBarCodeNumberErr(),
@@ -89,14 +96,25 @@ $app->get('/booking', function () use ($app, $url) {
 
 $app->get('/bookingSearch', function () use ($app, $url, $request) {    
 
-        $booking= new BookingClass($_SESSION["bookingEMail"],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"], $_SESSION["bookingDate"], $_SESSION["returnDate"],$_SESSION["bookingEMailAddressErr"],$_SESSION["barCodeNumberDuplicateErr"], $_SESSION["barCodeNumber1Err"], $_SESSION["barCodeNumber2Err"], $_SESSION["barCodeNumber3Err"], $_SESSION["barCodeNumber4Err"], $_SESSION["barCodeNumber5Err"], $_SESSION["barCodeNumber6Err"], $_SESSION["barCodeNumber7Err"], $_SESSION["barCodeNumber8Err"], $_SESSION["barCodeNumber9Err"], $_SESSION["barCodeNumber10Err"], $_SESSION["bookingDateErr"], $_SESSION["returnDateErr"]);
+        $booking= new BookingClass($_SESSION["bookingEMail"],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"], $_SESSION["bookingDate"], $_SESSION["returnDate"],$_SESSION["bookingEMailAddressErr"],$_SESSION["barCodeNumberDuplicateErr"], $_SESSION["barCodeNumber1Err"], $_SESSION["barCodeNumber2Err"], $_SESSION["barCodeNumber3Err"], $_SESSION["barCodeNumber4Err"], $_SESSION["barCodeNumber5Err"], $_SESSION["barCodeNumber6Err"], $_SESSION["barCodeNumber7Err"], $_SESSION["barCodeNumber8Err"], $_SESSION["barCodeNumber9Err"], $_SESSION["barCodeNumber10Err"], $_SESSION["bookingDateErr"], $_SESSION["returnDateErr"], $_SESSION["returnBookingErr"], $_SESSION["bookingSearchErr"], NULL, NULL, NULL , $_SESSION["returnBookingOutput"], $_SESSION["bookingSearchArray"], NULL, NULL, NULL);
         $customer= new CustomerClass();
         $inventory= new InventoryClass();
         $bookingDAO= new BookingDAOClass();
         $bookingSearchController= new BookingSearchController($booking, $customer, $inventory, $bookingDAO);
+        if(!isset($_SESSION["inventoryCount"]))
+        {
+            $_SESSION["inventoryCount"]= 1;
+            $booking->setInventoryCount($_SESSION["inventoryCount"]);
+        }
 
+        $bookingSearchController->searchRecord();
+        
         return $app['twig']->render('bookingSearch.twig', ['url'=>$url,
-        'returnContent'=>$bookingSearchController->searchRecord(),
+        'duplicateError'=>$booking->getBarCodeNumberErr("d"),
+        'returnBookingError'=>$booking->getReturnBookingErr(),
+        'returnBookingOutput'=>$booking->getReturnBookingOutput(),
+        'bookingSearchArray'=>$booking->getBookingSearchArray(),
+        'bookingSearchErr'=>$booking->getBookingSearchErr(),
         'bookingInventory'=>$booking->getBookingInventory($_SESSION["inventoryCount"]),
         'returnDate'=>$booking->getReturnDate(),
         'returnDateError'=>$booking->getReturnDateErr(),
@@ -118,17 +136,30 @@ $app->get('/bookingSearch', function () use ($app, $url, $request) {
 
 $app->get('/bookingCreate', function () use ($app, $url, $request) {    
 
-    $booking= new BookingClass($_SESSION["bookingEMail"],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"], $_SESSION["bookingDate"], NULL, $_SESSION["bookingEMailAddressErr"],$_SESSION["barCodeNumberDuplicateErr"], $_SESSION["barCodeNumber1Err"], $_SESSION["barCodeNumber2Err"], $_SESSION["barCodeNumber3Err"], $_SESSION["barCodeNumber4Err"], $_SESSION["barCodeNumber5Err"], $_SESSION["barCodeNumber6Err"], $_SESSION["barCodeNumber7Err"], $_SESSION["barCodeNumber8Err"], $_SESSION["barCodeNumber9Err"], $_SESSION["barCodeNumber10Err"], $_SESSION["bookingDateErr"],NULL);
+    $booking= new BookingClass($_SESSION["bookingEMail"],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"], $_SESSION["bookingDate"], NULL, $_SESSION["bookingEMailAddressErr"],$_SESSION["barCodeNumberDuplicateErr"], $_SESSION["barCodeNumber1Err"], $_SESSION["barCodeNumber2Err"], $_SESSION["barCodeNumber3Err"], $_SESSION["barCodeNumber4Err"], $_SESSION["barCodeNumber5Err"], $_SESSION["barCodeNumber6Err"], $_SESSION["barCodeNumber7Err"], $_SESSION["barCodeNumber8Err"], $_SESSION["barCodeNumber9Err"], $_SESSION["barCodeNumber10Err"], $_SESSION["bookingDateErr"],NULL, NULL, $_SESSION["bookingSearchErr"], $_SESSION["createBookingErr"], $_SESSION["bookingCustomerErr"], $_SESSION["bookingInventoryErr"], NULL, $_SESSION["bookingSearchArray"], $_SESSION["createBookingOutput"], $_SESSION["bookingCustomerArray"], $_SESSION["bookingInventoryArray"]);
     $customer= new CustomerClass();
     $inventory= new InventoryClass();
     $bookingDAO= new BookingDAOClass();
     $bookingCreateController= new BookingCreateController($booking, $customer, $inventory, $bookingDAO);
+    if(!isset($_SESSION["inventoryCount"]))
+        {
+            $_SESSION["inventoryCount"]= 1;
+            $booking->setInventoryCount($_SESSION["inventoryCount"]);
+        }
+        
+        $bookingCreateController->insertRecord();
 
         return $app['twig']->render('bookingCreate.twig', ['url'=>$url,
-        'returnContent'=>$bookingCreateController->insertRecord(),
+        'duplicateError'=>$booking->getBarCodeNumberErr("d"),
+        'createBookingError'=>$booking->getCreateBookingErr(),
+        'createBookingOutput'=>$booking->getCreateBookingOutput(),
         'eMail'=>$_SESSION["bookingEMail"],
         'eMailError'=>$booking->getEMailErr(),
-        'inventoryCount'=>$booking->getBookingInventory($_SESSION["inventoryCount"]),
+        'bookingCustomerArray'=>$booking->getBookingCustomerArray(),
+        'bookingCustomerErr'=>$booking->getBookingCustomerErr(),
+        'bookingInventory'=>$booking->getBookingInventory($_SESSION["inventoryCount"]),
+        'bookingInventoryErr'=>$booking->getBookingInventoryErr(),
+        'bookingInventoryArray'=>$booking->getBookingInventoryArray(),
         'bookingDate'=>$booking->getBookingDate(),
         'bookingDateError'=>$booking->getBookingDateErr(),
         'lastName'=>$customer->getLastName(),
@@ -157,8 +188,9 @@ $app->get('/accountCreate', function () use ($app, $url, $request) {
         $customerDAO= new CustomerDAOClass();
         $accountCreateController= new AccountCreateController($customer, $customerDAO);
 
+        $accountCreateController->insertRecord();
+
         return $app['twig']->render('accountCreate.twig', ['url'=>$url,
-        'returnContent'=>$accountCreateController->insertRecord(),
         'firstName'=>$customer->getFirstName(),
         'firstNameError'=>$customer->getFirstNameErr(),
         'lastName'=>$customer->getLastName(),
@@ -191,7 +223,9 @@ $app->get('/accountCreate', function () use ($app, $url, $request) {
         'romance'=>$customer->getRomance(),
         'scienceFiction'=>$customer->getScienceFiction(),
         'thriller'=>$customer->getThriller(),
-        'notes'=>$customer->getNotes()
+        'notes'=>$customer->getNotes(),
+        'createCustomerError'=>$customer->getCreateCustomerErr(),
+        'createCustomerOutput'=>$customer->getCreateCustomerOutput()
         ]);
     });
 
@@ -200,8 +234,11 @@ $app->get('/accountSearch', function () use ($app, $url, $request) {
         $customerDAO= new CustomerDAOClass();
         $accountSearchController= new AccountSearchController($customer, $customerDAO);
 
+        $accountSearchController->searchRecord();
+
         return $app['twig']->render('accountSearch.twig', ['url'=>$url,
-        'returnContent'=>$accountSearchController->searchRecord(),
+        'customerInformationError'=>$customer->getCustomerInformationErr(),
+        'customerInformationArray'=>$customer->getCustomerInformationArray(),
         'firstName'=>$customer->getFirstName(),
         'firstNameError'=>$customer->getFirstNameErr(),
         'lastName'=>$customer->getLastName(),

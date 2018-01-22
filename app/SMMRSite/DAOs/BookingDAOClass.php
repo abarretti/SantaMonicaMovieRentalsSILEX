@@ -1,7 +1,8 @@
-<?php namespace SMMRSite\Models\BookingModels;
+<?php namespace SMMRSite\DAOs;
 
-use SMMRSite\Models\DAOClass as DAOClass;
-use mysqli;
+use SMMRSite\DAOs\DAOClass;
+use SMMRSite\Models\BookingModels\BookingClass;
+use PDO;
 
 class BookingDAOClass extends DAOClass
 {
@@ -12,363 +13,295 @@ class BookingDAOClass extends DAOClass
 		$this->userName;
 		$this->passwordServer;
 		$this->dbName;
+		$this->conn;
 	}
 
-	public function bookingCustomerQuery($lastName, $dateOfBirth, $address1, $phoneNumber)
+	public function bookingCustomerQuery(BookingClass $bookingClass, $lastName, $dateOfBirth, $address1, $phoneNumber)
 	{
-		$conn= new mysqli($this->getServerName(), $this->getUserName(), $this->getPasswordServer(), $this->getdbName());
-		if ($conn->connect_error)
-		{
-			die("Connection failed; " . $conn->connect_error);
-		}
+		$this->connect();
+
 		//0000
 		if (empty($lastName) and empty($dateOfBirth) and empty($address1) and empty($phoneNumber))
 			{
 			$sql= "SELECT cuID, firstName, lastName, dateOfBirth, gender, address1, address2, city, state, phoneNumber, eMail FROM Customer";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 		
 		//1000
 		elseif (isset($lastName) and empty($dateOfBirth) and empty($address1) and empty($phoneNumber))
 			{
 			$sql= "SELECT cuID, firstName, lastName, dateOfBirth, gender, address1, address2, city, state, phoneNumber, eMail FROM Customer WHERE lastName= '".$lastName."'";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//0100
 		elseif (empty($lastName) and isset($dateOfBirth) and empty($address1) and empty($phoneNumber))
 			{
 			$sql= "SELECT cuID, firstName, lastName, dateOfBirth, gender, address1, address2, city, state, phoneNumber, eMail FROM Customer WHERE dateOfBirth= '".$dateOfBirth."'";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//0010
 		elseif (empty($lastName) and empty($dateOfBirth) and isset($address1) and empty($phoneNumber))
 			{
 			$sql= "SELECT cuID, firstName, lastName, dateOfBirth, gender, address1, address2, city, state, phoneNumber, eMail FROM Customer WHERE address1= '".$address1."'";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//0001
 		elseif (empty($lastName) and empty($dateOfBirth) and empty($address1) and isset($phoneNumber))
 			{
 			$sql= "SELECT cuID, firstName, lastName, dateOfBirth, gender, address1, address2, city, state, phoneNumber, eMail FROM Customer WHERE phoneNumber= '".$phoneNumber."'";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//1100
 		elseif (isset($lastName) and isset($dateOfBirth) and empty($address1) and empty($phoneNumber))
 			{
 			$sql= "SELECT cuID, firstName, lastName, dateOfBirth, gender, address1, address2, city, state, phoneNumber, eMail FROM Customer WHERE lastName= '".$lastName."' AND dateOfBirth= '".$dateOfBirth."'";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//1010
 		elseif (isset($lastName) and empty($dateOfBirth) and isset($address1) and empty($phoneNumber))
 			{
 			$sql= "SELECT cuID, firstName, lastName, dateOfBirth, gender, address1, address2, city, state, phoneNumber, eMail FROM Customer WHERE lastName= '".$lastName."' AND address1= '".$address1."'";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//1001
 		elseif (isset($lastName) and empty($dateOfBirth) and empty($address1) and isset($phoneNumber))
 			{
 			$sql= "SELECT cuID, firstName, lastName, dateOfBirth, gender, address1, address2, city, state, phoneNumber, eMail FROM Customer WHERE lastName= '".$lastName."' AND phoneNumber= '".$phoneNumber."'";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//0110
 		elseif (empty($lastName) and isset($dateOfBirth) and isset($address1) and empty($phoneNumber))
 			{
 			$sql= "SELECT cuID, firstName, lastName, dateOfBirth, gender, address1, address2, city, state, phoneNumber, eMail FROM Customer WHERE dateOfBirth= '".$dateOfBirth."' AND address1= '".$address1."'";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//0101
 		elseif (empty($lastName) and isset($dateOfBirth) and empty($address1) and isset($phoneNumber))
 			{
 			$sql= "SELECT cuID, firstName, lastName, dateOfBirth, gender, address1, address2, city, state, phoneNumber, eMail FROM Customer WHERE dateOfBirth= '".$dateOfBirth."' AND phoneNumber= '".$phoneNumber."'";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//0011
 		elseif (empty($lastName) and empty($dateOfBirth) and isset($address1) and isset($phoneNumber))
 			{
 			$sql= "SELECT cuID, firstName, lastName, dateOfBirth, gender, address1, address2, city, state, phoneNumber, eMail FROM Customer WHERE address1= '".$address1."' AND phoneNumber= '".$phoneNumber."'";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//1110
 		elseif (isset($lastName) and isset($dateOfBirth) and isset($address1) and empty($phoneNumber))
 			{
 			$sql= "SELECT cuID, firstName, lastName, dateOfBirth, gender, address1, address2, city, state, phoneNumber, eMail FROM Customer WHERE lastName= '".$lastName."' AND dateOfBirth= '".$dateOfBirth."' AND address1= '".$address1."'";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//1101
 		elseif (isset($lastName) and isset($dateOfBirth) and empty($address1) and isset($phoneNumber))
 			{
 			$sql= "SELECT cuID, firstName, lastName, dateOfBirth, gender, address1, address2, city, state, phoneNumber, eMail FROM Customer WHERE lastName= '".$lastName."' AND dateOfBirth= '".$dateOfBirth."' AND phoneNumber= '".$phoneNumber."'";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//1011
 		elseif (isset($lastName) and empty($dateOfBirth) and isset($address1) and isset($phoneNumber))
 			{
 			$sql= "SELECT cuID, firstName, lastName, dateOfBirth, gender, address1, address2, city, state, phoneNumber, eMail FROM Customer WHERE lastName= '".$lastName."' AND address1= '".$address1."' AND phoneNumber= '".$phoneNumber."'";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//0111
 		elseif (empty($lastName) and isset($dateOfBirth) and isset($address1) and isset($phoneNumber))
 			{
 			$sql= "SELECT cuID, firstName, lastName, dateOfBirth, gender, address1, address2, city, state, phoneNumber, eMail FROM Customer WHERE dateOfBirth= '".$dateOfBirth."' AND address1= '".$address1."' AND phoneNumber= '".$phoneNumber."'";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//1111
 		else
 			{
 			$sql= "SELECT cuID, firstName, lastName, dateOfBirth, gender, address1, address2, city, state, phoneNumber, eMail FROM Customer WHERE lastName= '".$lastName."' AND dateOfBirth= '".$dateOfBirth."' AND address1= '".$address1."' AND phoneNumber= '".$phoneNumber."'";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//check statement
 		//echo $sql;
 
-		if ($result->num_rows > 0) 
+		if ($result->rowCount() > 0) 
 		{
-			echo "<span class='notice'>* Search displays first 10 Results</span>";
-			echo "<form action= ".htmlspecialchars($_SERVER["PHP_SELF"])."?action=bookingCreate autocomplete='on' method='get'>";
-			echo "<h1 style='color:#16e059;'>Results:</h1>";
-			echo "<table border='1' style='width:100%'>
-				<tr>
-					<th>Customer ID</th>
-					<th>First Name</th>
-					<th>Last Name</th>
-					<th>Date of Birth</th>
-					<th>Gender</th>
-					<th>Address 1</th>
-					<th>Address 2</th>
-					<th>City</th>
-					<th>State</th>
-					<th>Phone Number</th>
-					<th>E-Mail Address</th>
-					<th>Select?</th>
-				</tr>
-			";
     		// output data of each row
     		$count=0;
     		$eMailArray= array();
-    		while(($row = $result->fetch_assoc()) and $count<10) 
-    		{echo "<tr>
-					<td>".$row["cuID"]."</td>
-					<td>".$row["firstName"]."</td>
-					<td>".$row["lastName"]."</td>
-					<td>".$row["dateOfBirth"]."</td>
-					<td>".$row["gender"]."</td>
-					<td>".$row["address1"]."</td>
-					<td>".$row["address2"]."</td>
-					<td>".$row["city"]."</td>
-					<td>".$row["state"]."</td>
-					<td>".$row["phoneNumber"]."</td>
-					<td><input type='text' name='eMail".$count."' value='".$row["eMail"]."' disabled></td>
-					<td><input type='submit' name='eMailSelect".$count."' value='Select'></td>
-				</tr>";
+    		while(($row = $result->fetch()) and $count<10) 
+    		{
+    			array_push($eMailArray, array("cuID"=>$row["cuID"], "firstName"=>$row["firstName"], "lastName"=>$row["lastName"], "dateOfBirth"=>$row["dateOfBirth"], "gender"=>$row["gender"], "address1"=>$row["address1"], "address2"=>$row["address2"], "city"=>$row["city"], "state"=>$row["state"], "phoneNumber"=>$row["phoneNumber"], "eMail"=>$row["eMail"], "count"=>$count));
 				$count= $count+1;
-				array_push($eMailArray,$row["eMail"]);
     		}
-    		echo "</table>";
-    		echo "</form>";
-    		return $eMailArray;
+    		$bookingClass->setBookingCustomerArray($eMailArray);
+    		return;
 		} 
 		
 		else 
 		{
-    		echo "<h1 style='color:red;'>No Results</h1>";
+    		$bookingClass->setBookingCustomerErr("No Results");
+    		return;
 		}
-		$conn->close();
+		$this->close();
 	}
 
-	public function bookingSearchCustomerQuery($lastName, $dateOfBirth, $address1, $phoneNumber)
+	public function bookingSearchCustomerQuery(BookingClass $bookingClass, $lastName, $dateOfBirth, $address1, $phoneNumber)
 	{
-		$conn= new mysqli($this->getServerName(), $this->getUserName(), $this->getPasswordServer(), $this->getdbName());
-		if ($conn->connect_error)
-		{
-			die("Connection failed; " . $conn->connect_error);
-		}
+		$this->connect();
+
 		//0000
 		if (empty($lastName) and empty($dateOfBirth) and empty($address1) and empty($phoneNumber))
 			{
 			$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID WHERE dateReturned is NULL ORDER BY bi.bkID desc";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 		
 		//1000
 		elseif (isset($lastName) and empty($dateOfBirth) and empty($address1) and empty($phoneNumber))
 			{
 			$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID WHERE lastName= '".$lastName."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//0100
 		elseif (empty($lastName) and isset($dateOfBirth) and empty($address1) and empty($phoneNumber))
 			{
 			$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID WHERE dateOfBirth= '".$dateOfBirth."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//0010
 		elseif (empty($lastName) and empty($dateOfBirth) and isset($address1) and empty($phoneNumber))
 			{
 			$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID WHERE address1= '".$address1."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//0001
 		elseif (empty($lastName) and empty($dateOfBirth) and empty($address1) and isset($phoneNumber))
 			{
 			$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID WHERE phoneNumber= '".$phoneNumber."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//1100
 		elseif (isset($lastName) and isset($dateOfBirth) and empty($address1) and empty($phoneNumber))
 			{
 			$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID WHERE lastName= '".$lastName."' AND dateOfBirth= '".$dateOfBirth."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//1010
 		elseif (isset($lastName) and empty($dateOfBirth) and isset($address1) and empty($phoneNumber))
 			{
 			$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID WHERE lastName= '".$lastName."' AND address1= '".$address1."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//1001
 		elseif (isset($lastName) and empty($dateOfBirth) and empty($address1) and isset($phoneNumber))
 			{
 			$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID WHERE lastName= '".$lastName."' AND phoneNumber= '".$phoneNumber."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//0110
 		elseif (empty($lastName) and isset($dateOfBirth) and isset($address1) and empty($phoneNumber))
 			{
 			$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID WHERE dateOfBirth= '".$dateOfBirth."' AND address1= '".$address1."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//0101
 		elseif (empty($lastName) and isset($dateOfBirth) and empty($address1) and isset($phoneNumber))
 			{
 			$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID WHERE dateOfBirth= '".$dateOfBirth."' AND phoneNumber= '".$phoneNumber."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//0011
 		elseif (empty($lastName) and empty($dateOfBirth) and isset($address1) and isset($phoneNumber))
 			{
 			$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID WHERE address1= '".$address1."' AND phoneNumber= '".$phoneNumber."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//1110
 		elseif (isset($lastName) and isset($dateOfBirth) and isset($address1) and empty($phoneNumber))
 			{
 			$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID WHERE lastName= '".$lastName."' AND dateOfBirth= '".$dateOfBirth."' AND address1= '".$address1."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//1101
 		elseif (isset($lastName) and isset($dateOfBirth) and empty($address1) and isset($phoneNumber))
 			{
 			$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID WHERE lastName= '".$lastName."' AND dateOfBirth= '".$dateOfBirth."' AND phoneNumber= '".$phoneNumber."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//1011
 		elseif (isset($lastName) and empty($dateOfBirth) and isset($address1) and isset($phoneNumber))
 			{
 			$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID WHERE lastName= '".$lastName."' AND address1= '".$address1."' AND phoneNumber= '".$phoneNumber."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//0111
 		elseif (empty($lastName) and isset($dateOfBirth) and isset($address1) and isset($phoneNumber))
 			{
 			$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID WHERE dateOfBirth= '".$dateOfBirth."' AND address1= '".$address1."' AND phoneNumber= '".$phoneNumber."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//1111
 		else
 			{
 			$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID WHERE lastName= '".$lastName."' AND dateOfBirth= '".$dateOfBirth."' AND address1= '".$address1."' AND phoneNumber= '".$phoneNumber."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-			$result = $conn->query($sql);
+			$result = $this->conn->query($sql);
 			}
 
 		//check statement
-		//echo $sql;
 
-		if ($result->num_rows > 0) 
+		if ($result->rowCount() > 0) 
 		{
-			echo "<span class='notice'>* Search displays first 10 Results</span>";
-			echo "<form action= ".htmlspecialchars($_SERVER["PHP_SELF"])."?action=bookingSearch autocomplete='on' method='get'>";
-			echo "<h1 style='color:#16e059;'>Results:</h1>";
-			echo "<table border='1' style='width:100%'>
-				<tr>
-					<th>Booking Number</th>
-					<th>Date of Booking</th>
-					<th>Date Returned</th>
-					<th>Barcode Number</th>
-					<th>SKU Number</th>
-					<th>Product Name</th>
-					<th>Last Name</th>
-					<th>First Name</th>
-					<th>E-Mail</th>
-					<th>Select?</th>
-				</tr>
-			";
     		// output data of each row
     		$count=0;
     		$inventoryArray= array();
-    		while(($row = $result->fetch_assoc()) and $count<10) 
-    		{echo "<tr>
-					<td>".$row["bkID"]."</td>
-					<td>".$row["dateOfBooking"]."</td>
-					<td>".$row["dateReturned"]."</td>
-					<td><input type='text' name='barCode".$count."' value='".$row["barCodeNumber"]."' disabled></td>
-					<td>".$row["sKUNumber"]."</td>
-					<td>".$row["name"]."</td>
-					<td>".$row["lastName"]."</td>
-					<td>".$row["firstName"]."</td>
-					<td>".$row["eMail"]."</td>
-					<td><input type='submit' name='barCodeSelect".$count."' value='Select'></td>
-				</tr>";
+    		while(($row = $result->fetch()) and $count<10) 
+    		{
+				array_push($inventoryArray,array("bkID"=>$row["bkID"], "dateOfBooking"=>$row["dateOfBooking"], "dateReturned"=>$row["dateReturned"], "count"=>$count, "barCodeNumber"=>$row["barCodeNumber"], "sKUNumber"=>$row["sKUNumber"], "name"=>$row["name"], "lastName"=>$row["lastName"], "firstName"=>$row["firstName"], "eMail"=>$row["eMail"]));
 				$count= $count+1;
-				array_push($inventoryArray,$row["barCodeNumber"]);
     		}
-    		echo "</table>";
-    		echo "</form>";
-    		return $inventoryArray;
+    		//return Array
+    		$bookingClass->setBookingSearchArray($inventoryArray);
+    		return;
 		} 
 		
 		else 
 		{
-    		echo "<h1 style='color:red;'>No Results</h1>";
+    		$bookingClass->setBookingSearchErr("No Results");
+    		return;
 		}
-		$conn->close();
+		$this->close();
 	}//function close
 
-	public function bookingInventoryQuery($barCodeNumber, $sKUNumber, $productName)
+	public function bookingInventoryQuery(BookingClass $bookingClass, $barCodeNumber, $sKUNumber, $productName)
 	{
-		$conn= new mysqli($this->getServerName(), $this->getUserName(), $this->getPasswordServer(), $this->getdbName());
-		if ($conn->connect_error)
-		{
-			die("Connection failed; " . $conn->connect_error);
-		}
+		$this->connect();
+		
 		//000
 		if (empty($barCodeNumber) AND empty($sKUNumber) AND empty($productName))
 			{
@@ -378,7 +311,7 @@ class BookingDAOClass extends DAOClass
 					JOIN ProductGenreJoin pgj ON p.prID = pgj.prID
 					JOIN Genre g ON pgj.gnID = g.gnID
 					JOIN ProductionCompany pc ON p.pcID = pc.pcID";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 
 		//100
@@ -391,7 +324,7 @@ class BookingDAOClass extends DAOClass
 					JOIN Genre g ON pgj.gnID = g.gnID
 					JOIN ProductionCompany pc ON p.pcID = pc.pcID
 					WHERE barCodeNumber = '".$barCodeNumber."'";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 	
 		//010
@@ -404,7 +337,7 @@ class BookingDAOClass extends DAOClass
 					JOIN Genre g ON pgj.gnID = g.gnID
 					JOIN ProductionCompany pc ON p.pcID = pc.pcID
 					WHERE sKUNumber = '".$sKUNumber."'";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 
 		//001
@@ -417,7 +350,7 @@ class BookingDAOClass extends DAOClass
 					JOIN Genre g ON pgj.gnID = g.gnID
 					JOIN ProductionCompany pc ON p.pcID = pc.pcID
 					WHERE name = '".$productName."'";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 
 		//110
@@ -431,7 +364,7 @@ class BookingDAOClass extends DAOClass
 					JOIN ProductionCompany pc ON p.pcID = pc.pcID
 					WHERE barCodeNumber = '".$barCodeNumber."'
 					AND sKUNumber = '".$sKUNumber."'";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 
 		//011
@@ -445,7 +378,7 @@ class BookingDAOClass extends DAOClass
 					JOIN ProductionCompany pc ON p.pcID = pc.pcID
 					WHERE sKUNumber = '".$sKUNumber."'
 					AND name = '".$productName."'";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 
 		//101
@@ -459,7 +392,7 @@ class BookingDAOClass extends DAOClass
 					JOIN ProductionCompany pc ON p.pcID = pc.pcID
 					WHERE barCodeNumber = '".$barCodeNumber."'
 					AND name = '".$productName."'";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 
 		//111
@@ -474,33 +407,17 @@ class BookingDAOClass extends DAOClass
 					WHERE barCodeNumber = '".$barCodeNumber."'
 					AND sKUNumber = '".$sKUNumber."'
 					AND name = '".$productName."'";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 
 		//check statement
 		//echo $sql;
 
-		if ($result->num_rows > 0) 
+		if ($result->rowCount() > 0) 
 		{
-			echo "<span class='notice'>* Search displays first 10 Results</span>";
-			echo "<form action= ".htmlspecialchars($_SERVER["PHP_SELF"])."?action=bookingCreate autocomplete='on' method='get'>";
-			echo "<h1 style='color:#16e059;'>Results:</h1>";
-			echo "<table border='1' style='width:100%'>
-				<tr>
-					<th>Barcode Number</th>
-					<th>SKU Number</th>
-					<th>Product Name</th>
-					<th>Production Company</th>
-					<th>Genre(s)</th>
-					<th>Date Acquired</th>
-					<th>Condition</th>
-					<th>Select?</>
-				</tr>
-			";
-
     		// Inserts data in each row into an Array
     		$recordArray = array();
-    		while(($row = $result->fetch_assoc())) 
+    		while(($row = $result->fetch())) 
     		{
     			array_push($recordArray, array("barCodeNumber"=>$row["barCodeNumber"],"sKUNumber"=> $row["sKUNumber"],"name"=>$row["name"],"productionCompanyName"=>$row["productionCompanyName"], "genreName"=>$row["genreName"],"dateAcquired"=>$row["dateAcquired"], "productCondition"=>$row["productCondition"]));
     		}
@@ -531,45 +448,31 @@ class BookingDAOClass extends DAOClass
     		{
     			if(!in_array($x,$dontDisplay) and $count<10)
     			{
-    				echo "<tr>
-					<td><input type='text' name='barCode".$count."' value='".$recordArray[$x]["barCodeNumber"]."' disabled></td>
-					<td>".$recordArray[$x]["sKUNumber"]."</td>
-					<td>".$recordArray[$x]["name"]."</td>
-					<td>".$recordArray[$x]["productionCompanyName"]."</td>
-					<td>".$recordArray[$x]["genreName"]."</td>
-					<td>".$recordArray[$x]["dateAcquired"]."</td>
-					<td>".$recordArray[$x]["productCondition"]."</td>
-					<td><input type='submit' name='barCodeSelect".$count."' value='Select'></td>
-				</tr>";
-				$count= $count+1;
-				array_push($inventoryArray,$recordArray[$x]["barCodeNumber"]);
+    				array_push($inventoryArray,array("count"=>$count, "barCodeNumber"=>$recordArray[$x]["barCodeNumber"], "sKUNumber"=>$recordArray[$x]["sKUNumber"], "name"=>$recordArray[$x]["name"], "productionCompanyName"=>$recordArray[$x]["productionCompanyName"], "genreName"=>$recordArray[$x]["genreName"], "dateAcquired"=>$recordArray[$x]["dateAcquired"], "productCondition"=>$recordArray[$x]["productCondition"]));
+					$count= $count+1;
 				}
     		}
-    		echo "</table>";
-    		echo "</form>";
-    		return $inventoryArray;
+    		$bookingClass->setBookingInventoryArray($inventoryArray);
+    		return;
 		} 
 		
 		else 
 		{
-    		echo "<h1 style='color:red;'>No Results</h1>";
+    		$bookingClass->setBookingInventoryErr("No Results");
+    		return;
 		}
-		
-		$conn->close();
+		$this->close();
 	} //Function Close
 
-	public function bookingSearchInventoryQuery($barCodeNumber, $sKUNumber, $productName)
+	public function bookingSearchInventoryQuery(BookingClass $bookingClass, $barCodeNumber, $sKUNumber, $productName)
 	{
-		$conn= new mysqli($this->getServerName(), $this->getUserName(), $this->getPasswordServer(), $this->getdbName());
-		if ($conn->connect_error)
-		{
-			die("Connection failed; " . $conn->connect_error);
-		}
+		$this->connect();
+
 		//000
 		if (empty($barCodeNumber) AND empty($sKUNumber) AND empty($productName))
 			{
 				$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID WHERE dateReturned is NULL ORDER BY bi.bkID desc";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 
 		//100
@@ -577,7 +480,7 @@ class BookingDAOClass extends DAOClass
 			{
 				$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID
 					WHERE barCodeNumber = '".$barCodeNumber."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 	
 		//010
@@ -585,7 +488,7 @@ class BookingDAOClass extends DAOClass
 			{
 				$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID
 					WHERE sKUNumber = '".$sKUNumber."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 
 		//001
@@ -593,7 +496,7 @@ class BookingDAOClass extends DAOClass
 			{
 				$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID
 					WHERE name = '".$productName."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 
 		//110
@@ -602,7 +505,7 @@ class BookingDAOClass extends DAOClass
 				$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID
 					WHERE barCodeNumber = '".$barCodeNumber."'
 					AND sKUNumber = '".$sKUNumber."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 
 		//011
@@ -611,7 +514,7 @@ class BookingDAOClass extends DAOClass
 				$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID
 					WHERE sKUNumber = '".$sKUNumber."'
 					AND name = '".$productName."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 
 		//101
@@ -620,7 +523,7 @@ class BookingDAOClass extends DAOClass
 				$sql= "SELECT bi.bkID, dateOfBooking, dateReturned, barCodeNumber, sKUNumber, name, lastName, firstName, eMail FROM Customer c JOIN Booking b ON c.cuID = b.cuID JOIN BookingInventory bi ON b.bkID = bi.bkID JOIN Inventory i ON i.inID = bi.inID JOIN Product p ON i.prID = p.prID
 					WHERE barCodeNumber = '".$barCodeNumber."'
 					AND name = '".$productName."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 
 		//111
@@ -630,83 +533,51 @@ class BookingDAOClass extends DAOClass
 					WHERE barCodeNumber = '".$barCodeNumber."'
 					AND sKUNumber = '".$sKUNumber."'
 					AND name = '".$productName."' AND dateReturned is NULL ORDER BY bi.bkID desc";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 
 		//check statement
 		//echo $sql;
 
-		if ($result->num_rows > 0) 
+		if ($result->rowCount() > 0) 
 		{
-			echo "<span class='notice'>* Search displays first 10 Results</span>";
-			echo "<form action= ".htmlspecialchars($_SERVER["PHP_SELF"])."?action=bookingSearch autocomplete='on' method='get'>";
-			echo "<h1 style='color:#16e059;'>Results:</h1>";
-			echo "<table border='1' style='width:100%'>
-				<tr>
-					<th>Booking Number</th>
-					<th>Date of Booking</th>
-					<th>Date Returned</th>
-					<th>Barcode Number</th>
-					<th>SKU Number</th>
-					<th>Product Name</th>
-					<th>Last Name</th>
-					<th>First Name</th>
-					<th>E-Mail</th>
-					<th>Select?</th>
-				</tr>
-			";
-
-  			// output data of each row
+    		// output data of each row
     		$count=0;
     		$inventoryArray= array();
-    		while(($row = $result->fetch_assoc()) and $count<10) 
-    		{echo "<tr>
-					<td>".$row["bkID"]."</td>
-					<td>".$row["dateOfBooking"]."</td>
-					<td>".$row["dateReturned"]."</td>
-					<td><input type='text' name='barCode".$count."' value='".$row["barCodeNumber"]."' disabled></td>
-					<td>".$row["sKUNumber"]."</td>
-					<td>".$row["name"]."</td>
-					<td>".$row["lastName"]."</td>
-					<td>".$row["firstName"]."</td>
-					<td>".$row["eMail"]."</td>
-					<td><input type='submit' name='barCodeSelect".$count."' value='Select'></td>
-				</tr>";
+    		while(($row = $result->fetch()) and $count<10) 
+    		{
+				array_push($inventoryArray,array("bkID"=>$row["bkID"], "dateOfBooking"=>$row["dateOfBooking"], "dateReturned"=>$row["dateReturned"], "count"=>$count, "barCodeNumber"=>$row["barCodeNumber"], "sKUNumber"=>$row["sKUNumber"], "name"=>$row["name"], "lastName"=>$row["lastName"], "firstName"=>$row["firstName"], "eMail"=>$row["eMail"]));
 				$count= $count+1;
-				array_push($inventoryArray,$row["barCodeNumber"]);
     		}
-    		echo "</table>";
-    		echo "</form>";
-    		return $inventoryArray;
+    		//return Array
+    		$bookingClass->setBookingSearchArray($inventoryArray);
+    		return;
 		} 
 		
 		else 
 		{
-    		echo "<h1 style='color:red;'>No Results</h1>";
+    		$bookingClass->setBookingSearchErr("No Results");
+    		return;
 		}
-		$conn->close();
+		$this->close();
 	} //Function Close
 
-	public function createBookingRecord($eMail, $barCodeNumber1, $barCodeNumber2, $barCodeNumber3, $barCodeNumber4, $barCodeNumber5, $barCodeNumber6, $barCodeNumber7, $barCodeNumber8, $barCodeNumber9, $barCodeNumber10, $bookingDate)
+	public function createBookingRecord(BookingClass $bookingClass, $eMail, $barCodeNumber1, $barCodeNumber2, $barCodeNumber3, $barCodeNumber4, $barCodeNumber5, $barCodeNumber6, $barCodeNumber7, $barCodeNumber8, $barCodeNumber9, $barCodeNumber10, $bookingDate)
 	{
 		//E-Mail Check
-		$conn= new mysqli($this->getServerName(), $this->getUserName(), $this->getPasswordServer(), $this->getdbName());
-		if ($conn->connect_error)
-		{
-			die("Connection failed; " . $conn->connect_error);
-		}
+		$this->connect();
 
 		$eMailSQL = "SELECT cuID, eMail FROM Customer WHERE eMail= '".$eMail."' LIMIT 1";
-		$eMailResult = $conn->query($eMailSQL);
+		$eMailResult = $this->conn->query($eMailSQL);
 		
-		if ($eMailResult->num_rows == 0) 
+		if ($eMailResult->rowCount() == 0) 
 		{
-        	return "<h1 style='color:red;'>E-Mail Address is not valid.</h1>";
+        	$bookingClass->setCreateBookingErr("E-Mail Address is not valid.");
+        	return;
 		}
 		//Saves E-Mail's cuID to variable
-		$row = $eMailResult->fetch_assoc();
+		$row = $eMailResult->fetch();
 		$cuID= $row["cuID"];
-		echo $cuID."<br>";
 
 		//Barcode number check
 		$allBarCodeNumbers= array();
@@ -724,14 +595,14 @@ class BookingDAOClass extends DAOClass
 
 		$barCodeSQL= "SELECT inID, barCodeNumber FROM Inventory WHERE barCodeNumber in ('".$barCodeNumber1."', '".$barCodeNumber2."', '".$barCodeNumber3."', '".$barCodeNumber4."', '".$barCodeNumber5."', '".$barCodeNumber6."', '".$barCodeNumber7."', '".$barCodeNumber8."', '".$barCodeNumber9."', '".$barCodeNumber10."')";
 
-		$barCodeResult= $conn->query($barCodeSQL);
+		$barCodeResult= $this->conn->query($barCodeSQL);
 
 		$inventoryIDArray= array();
 		$databaseBarCodeNumbers= array();
 		
-		if($barCodeResult->num_rows>0)
+		if($barCodeResult->rowCount()>0)
 		{
-			while ($row = $barCodeResult->fetch_assoc())
+			while ($row = $barCodeResult->fetch())
 			{
 				array_push($inventoryIDArray, $row["inID"]);
 				array_push($databaseBarCodeNumbers, $row["barCodeNumber"]);
@@ -740,7 +611,8 @@ class BookingDAOClass extends DAOClass
 
 		else
 		{
-			return "<h1 style='color:red;'>All Barcodes are not valid.</h1>";
+			$bookingClass->setCreateBookingErr("All Barcodes are not valid.");
+			return;
 		}
 
 		//Checks if the barcodes entered by the user are in the database
@@ -755,7 +627,8 @@ class BookingDAOClass extends DAOClass
 
 		if(count($notInDataBase)>0)
 		{
-			return "<h1 style='color:red;'>The following Barcodes are not valid: ".$notInDataBase[0]." ".$notInDataBase[1]." ".$notInDataBase[2]." ".$notInDataBase[3]." ".$notInDataBase[4]." ".$notInDataBase[5]." ".$notInDataBase[6]." ".$notInDataBase[7]." ".$notInDataBase[8]." ".$notInDataBase[9]."</h1>";
+			$bookingClass->setCreateBookingErr("The following Barcodes are not valid: ".$notInDataBase[0]." ".$notInDataBase[1]." ".$notInDataBase[2]." ".$notInDataBase[3]." ".$notInDataBase[4]." ".$notInDataBase[5]." ".$notInDataBase[6]." ".$notInDataBase[7]." ".$notInDataBase[8]." ".$notInDataBase[9]);
+			return;
 		}
 
 		//Checks if barcodes entered by user are on loan
@@ -763,9 +636,9 @@ class BookingDAOClass extends DAOClass
 		foreach($databaseBarCodeNumbers as $barCodeNumber)
 		{
 			$barCodeLoanCheckSQL= "SELECT bkid, bi.inid, barCodeNumber, dateReturned FROM Inventory i JOIN BookingInventory bi ON i.inid = bi.inid WHERE dateReturned IS NULL AND barCodeNumber= '".$barCodeNumber."'";
-			$barCodeLoanCheckResult= $conn->query($barCodeLoanCheckSQL);
+			$barCodeLoanCheckResult= $this->conn->query($barCodeLoanCheckSQL);
 
-			$row= $barCodeLoanCheckResult->fetch_assoc();
+			$row= $barCodeLoanCheckResult->fetch();
 			if(isset($row["barCodeNumber"]))
 			{
 				array_push($barCodeLoanArray, $row["barCodeNumber"]);
@@ -774,54 +647,52 @@ class BookingDAOClass extends DAOClass
 
 		if(count($barCodeLoanArray)>0)
 		{
-			return "<h1 style='color:red;'>The following Barcodes are currently on loan: ".$barCodeLoanArray[0]." ".$barCodeLoanArray[1]." ".$barCodeLoanArray[2]." ".$barCodeLoanArray[3]." ".$barCodeLoanArray[4]." ".$barCodeLoanArray[5]." ".$barCodeLoanArray[6]." ".$barCodeLoanArray[7]." ".$barCodeLoanArray[8]." ".$barCodeLoanArray[9]."</h1>";
+			$bookingClass->setCreateBookingErr("The following Barcodes are currently on loan: ".$barCodeLoanArray[0]." ".$barCodeLoanArray[1]." ".$barCodeLoanArray[2]." ".$barCodeLoanArray[3]." ".$barCodeLoanArray[4]." ".$barCodeLoanArray[5]." ".$barCodeLoanArray[6]." ".$barCodeLoanArray[7]." ".$barCodeLoanArray[8]." ".$barCodeLoanArray[9]);
+			return;
 		}
 
 		//INSERTS NEW BOOKING RECORDS INTO DATABASE
-		$bookingSQL= "INSERT INTO Booking (cuID, dateOfBooking) VALUES (".$cuID.", '".$bookingDate."')";
-		$conn->query($bookingSQL);
+		$bookingSQL= "INSERT INTO Booking (cuID, dateOfBooking) VALUES (:cuID, :bookingDate)";
+		$bookingResult= $this->conn->prepare($bookingSQL);
+		$bookingResult->execute(array(
+			':cuID' => $cuID,
+			':bookingDate' => $bookingDate
+			));
 
 		$returnBkIDSQL= "SELECT bkID FROM Booking WHERE cuid=".$cuID." ORDER BY bkID DESC LIMIT 1"; 
-		$resultReturnBkIDSQL= $conn->query($returnBkIDSQL);
+		$resultReturnBkIDSQL= $this->conn->query($returnBkIDSQL);
 
 		//Saves New bkID to variable
-		$row = $resultReturnBkIDSQL->fetch_assoc();
+		$row = $resultReturnBkIDSQL->fetch();
 		$bkID= $row["bkID"];
 
 		//Insert Records into BookingInventory
-		$bookingInventorySQL="";
+		$bookingInventorySQL=array();
 		foreach($inventoryIDArray as $inID)
 		{
-			if ($inID == $inventoryIDArray[0])
+			array_push($bookingInventorySQL,array("bkID"=>$bkID, "inID"=>$inID));
+		}
+
+		foreach($bookingInventorySQL as $sql)
+		{
+			$sqlResult= $this->conn->prepare("INSERT INTO BookingInventory (bkID, inID) VALUES (:bkID, :inID);");
+			
+			if($sqlResult->execute(array(
+			':bkID' => $sql['bkID'],
+			':inID' => $sql['inID']
+			))===FALSE)
 			{
-				$bookingInventorySQL="INSERT INTO BookingInventory (bkID, inID) VALUES (".$bkID.", ".$inID.");";
+				$bookingClass->setCreateBookingErr("Error: " .$bookingInventorySQL. "<br>" . $this->conn->error);
+                return;
 			}
-			else
-			{
-				$bookingInventorySQL .="INSERT INTO BookingInventory (bkID, inID) VALUES (".$bkID.", ".$inID.");";
-			}	
-		}
-
-		if($conn->multi_query($bookingInventorySQL)===TRUE)
-		{
-			return "<h1 style='color:#16e059;'>New Booking created successfully</h1>";
-		}
-
-		else
-		{
-			return "Error: " .$bookingInventorySQL. "<br>" . $conn->error;
-		}
-
-		$conn->close();
+        }
+        $bookingClass->setCreateBookingOutput("New Booking created successfully.");
+		$this->close();
 	}//function close
 
-	public function returnBooking($barCodeNumber1, $barCodeNumber2, $barCodeNumber3, $barCodeNumber4, $barCodeNumber5, $barCodeNumber6, $barCodeNumber7, $barCodeNumber8, $barCodeNumber9, $barCodeNumber10, $returnDate)
+	public function returnBooking(BookingClass $bookingClass, $barCodeNumber1, $barCodeNumber2, $barCodeNumber3, $barCodeNumber4, $barCodeNumber5, $barCodeNumber6, $barCodeNumber7, $barCodeNumber8, $barCodeNumber9, $barCodeNumber10, $returnDate)
 	{
-		$conn= new mysqli($this->getServerName(), $this->getUserName(), $this->getPasswordServer(), $this->getdbName());
-		if ($conn->connect_error)
-		{
-			die("Connection failed; " . $conn->connect_error);
-		}
+		$this->connect();
 
 		//Barcode number check
 		$allBarCodeNumbers= array();
@@ -839,14 +710,14 @@ class BookingDAOClass extends DAOClass
 
 		$barCodeSQL= "SELECT inID, barCodeNumber FROM Inventory WHERE barCodeNumber in ('".$barCodeNumber1."', '".$barCodeNumber2."', '".$barCodeNumber3."', '".$barCodeNumber4."', '".$barCodeNumber5."', '".$barCodeNumber6."', '".$barCodeNumber7."', '".$barCodeNumber8."', '".$barCodeNumber9."', '".$barCodeNumber10."')";
 
-		$barCodeResult= $conn->query($barCodeSQL);
+		$barCodeResult= $this->conn->query($barCodeSQL);
 
 		$inventoryIDArray= array();
 		$databaseBarCodeNumbers= array();
 		
-		if($barCodeResult->num_rows>0)
+		if($barCodeResult->rowCount()>0)
 		{
-			while ($row = $barCodeResult->fetch_assoc())
+			while ($row = $barCodeResult->fetch())
 			{
 				array_push($inventoryIDArray, $row["inID"]);
 				array_push($databaseBarCodeNumbers, $row["barCodeNumber"]);
@@ -855,7 +726,8 @@ class BookingDAOClass extends DAOClass
 
 		else
 		{
-			return "<h1 style='color:red;'>All Barcodes are not valid.</h1>";
+			$bookingClass->setReturnBookingErr("All Barcodes are not valid.");
+			return;
 		}
 
 		//Checks if the barcodes entered by the user are in the database
@@ -870,7 +742,8 @@ class BookingDAOClass extends DAOClass
 
 		if(count($notInDataBase)>0)
 		{
-			return "<h1 style='color:red;'>The following Barcodes are not valid: ".$notInDataBase[0]." ".$notInDataBase[1]." ".$notInDataBase[2]." ".$notInDataBase[3]." ".$notInDataBase[4]." ".$notInDataBase[5]." ".$notInDataBase[6]." ".$notInDataBase[7]." ".$notInDataBase[8]." ".$notInDataBase[9]."</h1>";
+			$bookingClass->setReturnBookingErr("The following Barcodes are not valid: ".$notInDataBase[0]." ".$notInDataBase[1]." ".$notInDataBase[2]." ".$notInDataBase[3]." ".$notInDataBase[4]." ".$notInDataBase[5]." ".$notInDataBase[6]." ".$notInDataBase[7]." ".$notInDataBase[8]." ".$notInDataBase[9]);
+			return;
 		}
 
 		//Checks if barcodes entered by user are on loan
@@ -879,9 +752,9 @@ class BookingDAOClass extends DAOClass
 		{
 			echo $barCodeNumber;
 			$barCodeLoanCheckSQL= "SELECT bkid, bi.inid, barCodeNumber, dateReturned FROM Inventory i JOIN BookingInventory bi ON i.inid = bi.inid WHERE dateReturned IS NULL AND barCodeNumber= '".$barCodeNumber."'";
-			$barCodeLoanCheckResult= $conn->query($barCodeLoanCheckSQL);
+			$barCodeLoanCheckResult= $this->conn->query($barCodeLoanCheckSQL);
 
-			$row = $barCodeLoanCheckResult->fetch_assoc();
+			$row = $barCodeLoanCheckResult->fetch();
 			if (!isset($row["barCodeNumber"]))
 			{
 				array_push($barCodeNotOnLoanArray, $barCodeNumber);
@@ -890,56 +763,60 @@ class BookingDAOClass extends DAOClass
 
 		if(count($barCodeNotOnLoanArray)>0)
 		{
-			return "<h1 style='color:red;'>The following Barcodes are NOT currently on loan: ".$barCodeNotOnLoanArray[0]." ".$barCodeNotOnLoanArray[1]." ".$barCodeNotOnLoanArray[2]." ".$barCodeNotOnLoanArray[3]." ".$barCodeNotOnLoanArray[4]." ".$barCodeNotOnLoanArray[5]." ".$barCodeNotOnLoanArray[6]." ".$barCodeNotOnLoanArray[7]." ".$barCodeNotOnLoanArray[8]." ".$barCodeNotOnLoanArray[9]."</h1>";
+			$bookingClass->setReturnBookingErr("The following Barcodes are NOT currently on loan: ".$barCodeNotOnLoanArray[0]." ".$barCodeNotOnLoanArray[1]." ".$barCodeNotOnLoanArray[2]." ".$barCodeNotOnLoanArray[3]." ".$barCodeNotOnLoanArray[4]." ".$barCodeNotOnLoanArray[5]." ".$barCodeNotOnLoanArray[6]." ".$barCodeNotOnLoanArray[7]." ".$barCodeNotOnLoanArray[8]." ".$barCodeNotOnLoanArray[9]);
+			return;
 		}
 
 		//UPDATES DATERETURNED FIELD IN BOOKINGINVENTORY TABLE
 		//Pulls bkID for each outstanding inID
-		$returnInventorySQL="";
+		$returnInventorySQL=array();
 		foreach($inventoryIDArray as $inID)
 		{
 			$bkIDSQL= "SELECT bkID, bi.inID, barCodeNumber FROM BookingInventory bi JOIN Inventory i ON bi.inID = i.inID WHERE dateReturned IS NULL AND bi.inID= ".$inID;
-			$bkIDResult= $conn->query($bkIDSQL);
+			$bkIDResult= $this->conn->query($bkIDSQL);
 
 			//Saves bkID and barCodeNumber to variables
-			$row = $bkIDResult->fetch_assoc();
+			$row = $bkIDResult->fetch();
 			$bkID= $row["bkID"];
 			$barCodeNumber= $row["barCodeNumber"];
 
 			//Checks if Return Date is after Booking Date
 			$bookingDateSQL= "SELECT dateOfBooking FROM Booking WHERE bkID= ".$bkID;
-			$bookingDateResult= $conn->query($bookingDateSQL);
-			$row = $bookingDateResult->fetch_assoc();
+			$bookingDateResult= $this->conn->query($bookingDateSQL);
+			$row = $bookingDateResult->fetch();
 			$dateOfBooking= $row["dateOfBooking"];
 
 			if($returnDate<$dateOfBooking)
 			{
-				return "<h1 style='color:red;'>The Return Date for Barcode Number ".$barCodeNumber." is before the Booking Date. Please select a Return Date that is after or equal to the Booking Date.</h1>";
+				$bookingClass->setReturnBookingErr("The Return Date for Barcode Number ".$barCodeNumber." is before the Booking Date. Please select a Return Date that is after or equal to the Booking Date");
+				return;
 			}
 
 			//Insert Records into BookingInventory
-			if ($inID == $inventoryIDArray[0])
-			{
-				$returnInventorySQL="UPDATE BookingInventory SET dateReturned='".$returnDate."' WHERE bkID=".$bkID." AND inID=".$inID.";";
-			}
-			else
-			{
-				$returnInventorySQL .="UPDATE BookingInventory SET dateReturned='".$returnDate."' WHERE bkID=".$bkID." AND inID=".$inID.";";
-			}	
-		}
-		
-		if($conn->multi_query($returnInventorySQL)===TRUE)
-		{
-			return "<h1 style='color:#16e059;'>Inventory Item(s) successfully returned</h1>";
-		}
-		else
-		{
-			return "Error: " .$returnInventorySQL. "<br>" . $conn->error;
+			array_push($returnInventorySQL,array("dateReturned"=>$returnDate,"bkID"=>$bkID, "inID"=>$inID));
 		}
 
-		$conn->close();
+		foreach($returnInventorySQL as $sql)
+		{
+			$sqlResult= $this->conn->prepare("UPDATE BookingInventory SET dateReturned= :returnDate WHERE bkID= :bkID AND inID= :inID;");
+			
+			if($sqlResult->execute(array(
+			':returnDate' => $sql['dateReturned'],
+			':bkID' => $sql['bkID'],
+			':inID' => $sql['inID']
+			))===FALSE)
+			{
+				$bookingClass->setReturnBookingErr("Error: ".$returnInventorySQL." ". $this->conn->error);
+				return;
+			}
+		}
+		
+		$bookingClass->setReturnBookingOutput("Inventory Item(s) successfully returned");
+		$this->close();
 	}//function close
 
 }//Class Close
 
 ?>
+
+<!-- php Desktop/PHP/SantaMonicaMovieRentalsSILEX/app/SMMRSite/DAOs/bookingDAOClass.php -->

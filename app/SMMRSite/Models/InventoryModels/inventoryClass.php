@@ -1,5 +1,7 @@
 <?php namespace SMMRSite\Models\InventoryModels;
 
+use SMMRSite\DAOs\InventoryDAOClass;
+
 class InventoryClass
 {
 	private $sKUNumber;
@@ -27,6 +29,12 @@ class InventoryClass
 	private $barCodeNumberErr;
 	private $dateAcquiredErr;
 	private $conditionErr;
+    private $createInventoryErr;
+    private $inventoryInformationErr;
+
+    private $createInventoryOutput;
+    private $inventoryInformationArray;
+    private $companyNamesArray;
 
 	public function __construct()
 	{
@@ -54,6 +62,12 @@ class InventoryClass
 		$this->barCodeNumberErr=NULL;
 		$this->dateAcquiredErr=NULL;
 		$this->conditionErr=NULL;
+        $this->createInventoryErr=NULL;
+        $this->inventoryInformationErr=NULL;
+
+        $this->createInventoryOutput=NULL;
+        $this->inventoryInformationArray=NULL;
+        $this->companyNamesArray=NULL;
 	}
 
 	/* Cleans Data Input*/
@@ -473,6 +487,46 @@ class InventoryClass
 	{
 		return $this->conditionErr;
 	}
+
+    public function setCreateInventoryErr($createInventoryErr)
+    {
+        $this->createInventoryErr=$createInventoryErr;
+    }
+
+    public function getCreateInventoryErr()
+    {
+        return $this->createInventoryErr;
+    }
+
+    public function setCreateInventoryOutput($createInventoryOutput)
+    {
+        $this->createInventoryOutput=$createInventoryOutput;
+    }
+
+    public function getCreateInventoryOutput()
+    {
+        return $this->createInventoryOutput;
+    }
+
+    public function setInventoryInformationArray($inventoryInformationArray)
+    {
+        $this->inventoryInformationArray=$inventoryInformationArray;
+    }
+
+    public function getInventoryInformationArray()
+    {
+        return $this->inventoryInformationArray;
+    }
+
+    public function setInventoryInformationErr($inventoryInformationErr)
+    {
+        $this->inventoryInformationErr=$inventoryInformationErr;
+    }
+
+    public function getInventoryInformationErr()
+    {
+        return $this->inventoryInformationErr;
+    }
 	
 	//Form Complete Check
 
@@ -511,6 +565,22 @@ class InventoryClass
 			return "FORM COMPLETE";
 		}
 	}
+
+    public function setCompanyNamesArray($companyNamesArray)
+    {
+        $this->companyNamesArray= $companyNamesArray;
+    }
+
+    public function getCompanyNamesArray(InventoryDAOClass $inventoryDAO)
+    {
+        $inventoryDAO->getCompanyNames($this);
+        return $this->companyNamesArray;
+    }
+
+    public function getGenres(InventoryDAOClass $inventoryDAOClass)
+    {
+        return $inventoryDAOClass->getGenres($this->action, $this->children, $this->comedy, $this->documentary, $this->drama, $this->horror, $this->musicals, $this->romance, $this->scienceFiction, $this->thriller);
+    }
 
 }
 ?>

@@ -8,7 +8,41 @@ Account Search
 
 {% block main %}
 
-    {{ returnContent | raw }}
+    <h1 style='color:red;'>{{ customerInformationError }}</h1>
+
+    {% if customerInformationArray is not empty %}
+    <h1 style='color:#16e059;'>Results:</h1>
+    <table border='1' style='width:100%'>
+        <tr>
+            <th>Customer ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Date of Birth</th>
+            <th>Gender</th>
+            <th>Address 1</th>
+            <th>Address 2</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Phone Number</th>
+            <th>E-Mail Address</th>
+        </tr>
+    {% for item in customerInformationArray %}
+        <tr>
+            <td>{{ item.cuID }}</td>
+            <td>{{ item.firstName }}</td>
+            <td>{{ item.lastName }}</td>
+            <td>{{ item.dateOfBirth }}</td>
+            <td>{{ item.gender }}</td>
+            <td>{{ item.address1 }}</td>
+            <td>{{ item.address2 }}</td>
+            <td>{{ item.city }}</td>
+            <td>{{ item.state }}</td>
+            <td>{{ item.phoneNumber }}</td>
+            <td>{{ item.eMail }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+    {% endif %}
 
         <h1>Search Customer Accounts</h1>
         <h2 class="notice">* field is subject to input restrictions.</h2>

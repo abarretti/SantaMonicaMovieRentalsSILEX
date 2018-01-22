@@ -1,7 +1,7 @@
 <?php namespace SMMRSite\Controllers\CustomerControllers;
 
 use SMMRSite\Models\CustomerModels\CustomerClass;
-use SMMRSite\Models\CustomerModels\CustomerDAOClass;
+use SMMRSite\DAOs\CustomerDAOClass;
 
 class AccountSearchController
 {
@@ -29,21 +29,23 @@ class AccountSearchController
       if (isset($_GET["submitPersonal"]) and $this->customer->formCustomerPersonalSearchCheck($this->customer->getFirstNameErr(), $this->customer->getLastNameErr())=="FORM COMPLETE")
       { 
         //Personal Info Database Query
-        return $this->customerDAO->personalInformationQuery($this->customer->getFirstName(), $this->customer->getLastName(), $this->customer->getDateOfBirth(), $this->customer->getGender());
+        $this->customerDAO->personalInformationQuery($this->customer, $this->customer->getFirstName(), $this->customer->getLastName(), $this->customer->getDateOfBirth(), $this->customer->getGender());
       }
 
       if (isset($_GET["submitAddress"]) and $this->customer->formCustomerAddressSearchCheck($this->customer->getAddress1Err(), $this->customer->getCityErr(), $this->customer->getPhoneNumberErr())=="FORM COMPLETE")
       {
         //Address Info Database Query
-        return $this->customerDAO->addressInformationQuery($this->customer->getAddress1(), $this->customer->getCity(), $this->customer->getState(), $this->customer->getPhoneNumber());
+        $this->customerDAO->addressInformationQuery($this->customer, $this->customer->getAddress1(), $this->customer->getCity(), $this->customer->getState(), $this->customer->getPhoneNumber());
       }
 
       if (isset($_GET["submitEMail"]) and $this->customer->formCustomerEMailSearchCheck($this->customer->getEMailErr())=="FORM COMPLETE")
       {
         //Email Database Query
-        return $this->customerDAO->eMailInformationQuery($this->customer->getEMailAddress()); 
+        $this->customerDAO->eMailInformationQuery($this->customer, $this->customer->getEMailAddress()); 
       }
   	}//functionClose
 
 }//class end
 ?>
+
+<!--  php Desktop/PHP/SantaMonicaMovieRentalsSILEX/app/SMMRSite/Controllers/CustomerControllers/accountSearchController.php -->

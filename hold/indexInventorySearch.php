@@ -6,7 +6,7 @@ date_default_timezone_set("America/New_York");
 require_once __DIR__ . '/vendor/autoload.php';
 
 use SMMRSite\Models\InventoryModels\InventoryClass;
-use SMMRSite\Models\InventoryModels\InventoryDAOClass;
+use SMMRSite\DAOs\InventoryDAOClass;
 use SMMRSite\Controllers\InventoryControllers\InventorySearchController;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -35,8 +35,8 @@ $app->get('/', function () use ($app, $url, $request) {
         'productName'=>$inventory->getProductName(),
         'productNameError'=>$inventory->getProductNameErr(),
         'productionCompanyName'=>$inventory->getProductionCompanyName(),
-        'companyNames'=>$inventoryDAO->getCompanyNames($inventory->getProductionCompanyName()),
-        'genres'=>$inventoryDAO->getGenres($inventory->getAction(), $inventory->getChildren(), $inventory->getComedy(), $inventory->getDocumentary(), $inventory->getDrama(), $inventory->getHorror(), $inventory->getMusicals(), $inventory->getRomance(), $inventory->getScienceFiction(), $inventory->getThriller())
+        'companyNames'=>$inventory->getCompanyNames($inventoryDAO),
+        'genres'=>$inventory->getGenres($inventoryDAO)
         ]);
     });
 

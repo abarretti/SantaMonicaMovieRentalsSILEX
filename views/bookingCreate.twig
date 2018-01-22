@@ -8,7 +8,78 @@ Booking Create
 
 {% block main %}
 
-    {{ returnContent | raw }}
+    <h2 style='color:red;'> {{ duplicateError }} {{ createBookingError }} {{ bookingCustomerErr }} {{ bookingInventoryErr }}</h2>
+    "<h1 style='color:#16e059;'> {{ createBookingOutput }} </h1>
+
+    {% if bookingCustomerArray is not empty %}
+    <span class='notice'>* Search displays first 10 Results</span>
+    <form action= "{{ url }}/index.php/bookingCreate" autocomplete='on' method='get'>
+    <h1 style='color:#16e059;'>Results:</h1>
+    <table border='1' style='width:100%'>
+                <tr>
+                    <th>Customer ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Date of Birth</th>
+                    <th>Gender</th>
+                    <th>Address 1</th>
+                    <th>Address 2</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Phone Number</th>
+                    <th>E-Mail Address</th>
+                    <th>Select?</th>
+                </tr>
+    {% for item in bookingCustomerArray %}
+    <tr>
+        <td>{{ item.cuID }}</td>
+        <td>{{ item.firstName }}</td>
+        <td>{{ item.lastName }}</td>
+        <td>{{ item.dateOfBirth }}</td>
+        <td>{{ item.gender }}</td>
+        <td>{{ item.address1 }}</td>
+        <td>{{ item.address2 }}</td>
+        <td>{{ item.city }}</td>
+        <td>{{ item.state }}</td>
+        <td>{{ item.phoneNumber }}</td>
+        <td><input type='text' name='eMail{{ item.count }}' value='{{ item.eMail }}' disabled></td>
+        <td><input type='submit' name='eMailSelect{{ item.count }}' value='Select'></td>
+    </tr>
+    {% endfor %}
+    </table>
+    </form>
+    {% endif %}
+
+    {% if bookingInventoryArray is not empty %}
+    <span class='notice'>* Search displays first 10 Results</span>
+    <form action= "{{ url }}/index.php/bookingCreate" autocomplete='on' method='get'>
+    <h1 style='color:#16e059;'>Results:</h1>
+    <table border='1' style='width:100%'>
+        <tr>
+            <th>Barcode Number</th>
+            <th>SKU Number</th>
+            <th>Product Name</th>
+            <th>Production Company</th>
+            <th>Genre(s)</th>
+            <th>Date Acquired</th>
+            <th>Condition</th>
+            <th>Select?</>
+        </tr>
+    {% for item in bookingInventoryArray %}
+        <tr>
+            <td><input type='text' name='barCode{{ item.count }}' value='{{ item.barCodeNumber }}' disabled></td>
+            <td>{{ item.sKUNumber }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.productionCompanyName }}</td>
+            <td>{{ item.genreName }}</td>
+            <td>{{ item.dateAcquired }}</td>
+            <td>{{ item.productCondition }}</td>
+            <td><input type='submit' name='barCodeSelect{{ item.count }}' value='Select'></td>
+        </tr>
+    {% endfor %}
+    </table>
+    </form>
+    {% endif %}
 
         <h1>Create Booking</h1>
         <form action= "{{ url }}/index.php/bookingCreate" autocomplete="on" method="get">
@@ -21,7 +92,9 @@ Booking Create
             </fieldset>
             <fieldset>
                 <legend>Inventory</legend>
-                {{ inventoryCount | raw }}
+                {% for inventory in bookingInventory %}
+                    Inventory Barcode Number: <input type='text' name='barCodeNumber{{ inventory.index }}' value='{{ inventory.barCodeNumber }}'><span class='error'> *{{ inventory.barCodeNumberErr }}</span><br><br>
+                {% endfor %}
             <input type="submit" name="addItem" value="Add Item">
             <input type="submit" name="removeItem" value="Remove Item">
             </fieldset>
