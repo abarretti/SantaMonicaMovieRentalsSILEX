@@ -37,6 +37,11 @@ class CustomerClass
 	private $eMailErr; 
 	private $passwordErr;
 	private $passwordRepeatErr;
+    private $createCustomerErr;
+    private $customerInformationErr;
+
+    private $createCustomerOutput;
+    private $customerInformationArray;
 
 	public function __construct()
 	{
@@ -74,7 +79,12 @@ class CustomerClass
 		$this->eMailErr=NULL;
 		$this->passwordErr=NULL;
 		$this->passwordRepeatErr=NULL;
-	}
+        $this->createCustomerErr=NULL;
+        $this->customerInformationErr=NULL;
+
+        $this->createCustomerOutput=NULL;
+	    $this->customerInformationArray=NULL;
+    }
 
 	/* Cleans Data Input*/
 	public function test_input($data) 
@@ -188,8 +198,7 @@ class CustomerClass
     			$this->setGenderErr("Gender is required");
   			} 
   		else 
-  			{
-				$gender= $this->test_input($gender);			
+  			{			
     			$this->gender= $gender;
   			}
 	}
@@ -279,7 +288,6 @@ class CustomerClass
   		} 
   		else 
   		{
-    		$state = $this->test_input($state);
   			$this->state= $state;	
   		}  
 	}
@@ -393,11 +401,11 @@ class CustomerClass
 	{	
 		if (empty($action)) 
 		{
-    		$this->action = "UNHEX('0')";
+    		$this->action = 0;
   		} 
   		else 
   		{
-    		$this->action = "UNHEX('1')";
+    		$this->action = 1;
   		}
 	}
 
@@ -410,11 +418,11 @@ class CustomerClass
 	{	
 		if (empty($children)) 
 		{
-    		$this->children = "UNHEX('0')";
+    		$this->children = 0;
   		} 
   		else 
   		{
-    		$this->children = "UNHEX('1')";
+    		$this->children = 1;
   		}
 	}
 
@@ -427,11 +435,11 @@ class CustomerClass
 	{	
 		if (empty($comedy)) 
 		{
-    		$this->comedy = "UNHEX('0')";
+    		$this->comedy = 0;
   		} 
   		else 
   		{
-    		$this->comedy = "UNHEX('1')";
+    		$this->comedy = 1;
   		}
 	}
 
@@ -444,11 +452,11 @@ class CustomerClass
 	{	
 		if (empty($documentary)) 
 		{
-    		$this->documentary = "UNHEX('0')";
+    		$this->documentary = 0;
   		} 
   		else 
   		{
-    		$this->documentary = "UNHEX('1')";
+    		$this->documentary = 1;
   		}
 	}
 
@@ -461,11 +469,11 @@ class CustomerClass
 	{	
 		if (empty($drama)) 
 		{
-    		$this->drama = "UNHEX('0')";
+    		$this->drama = 0;
   		} 
   		else 
   		{
-    		$this->drama = "UNHEX('1')";
+    		$this->drama = 1;
   		}
 	}
 
@@ -478,11 +486,11 @@ class CustomerClass
 	{	
 		if (empty($horror)) 
 		{
-    		$this->horror = "UNHEX('0')";
+    		$this->horror = 0;
   		} 
   		else 
   		{
-    		$this->horror = "UNHEX('1')";
+    		$this->horror = 1;
   		}
 	}
 
@@ -495,11 +503,11 @@ class CustomerClass
 	{	
 		if (empty($musicals)) 
 		{
-    		$this->musicals = "UNHEX('0')";
+    		$this->musicals = 0;
   		} 
   		else 
   		{
-    		$this->musicals = "UNHEX('1')";
+    		$this->musicals = 1;
   		}
 	}
 
@@ -512,11 +520,11 @@ class CustomerClass
 	{	
 		if (empty($romance)) 
 		{
-    		$this->romance = "UNHEX('0')";
+    		$this->romance = 0;
   		} 
   		else 
   		{
-    		$this->romance = "UNHEX('1')";
+    		$this->romance = 1;
   		}
 	}
 
@@ -529,11 +537,11 @@ class CustomerClass
 	{	
 		if (empty($scienceFiction)) 
 		{
-    		$this->scienceFiction = "UNHEX('0')";
+    		$this->scienceFiction = 0;
   		} 
   		else 
   		{
-    		$this->scienceFiction = "UNHEX('1')";
+    		$this->scienceFiction = 1;
   		}
 	}
 
@@ -546,11 +554,11 @@ class CustomerClass
 	{	
 		if (empty($thriller)) 
 		{
-    		$this->thriller = "UNHEX('0')";
+    		$this->thriller = 0;
   		} 
   		else 
   		{
-    		$this->thriller = "UNHEX('1')";
+    		$this->thriller = 1;
   		}
 	}
 
@@ -669,6 +677,46 @@ class CustomerClass
 	{
 		return $this->passwordRepeatErr;
 	}
+
+    public function setCreateCustomerErr($createCustomerErr)
+    {
+        $this->createCustomerErr=$createCustomerErr;
+    }
+
+    public function getCreateCustomerErr()
+    {
+        return $this->createCustomerErr;
+    }
+
+    public function setCreateCustomerOutput($createCustomerOutput)
+    {
+        $this->createCustomerOutput=$createCustomerOutput;
+    }
+
+    public function getCreateCustomerOutput()
+    {
+        return $this->createCustomerOutput;
+    }
+
+    public function setCustomerInformationArray($customerInformationArray)
+    {
+        $this->customerInformationArray=$customerInformationArray;
+    }
+
+    public function getCustomerInformationArray()
+    {
+        return $this->customerInformationArray;
+    }
+
+    public function setCustomerInformationErr($customerInformationErr)
+    {
+        $this->customerInformationErr=$customerInformationErr;
+    }
+
+    public function getCustomerInformationErr()
+    {
+        return $this->customerInformationErr;
+    }
 
 	public function formCustomerCreateCheck($firstNameErr, $lastNameErr, $genderErr,$address1Err, $cityErr, $stateErr, $phoneNumberErr, $eMailErr, $passwordErr, $passwordRepeatErr, $firstName, $lastName, $gender, $address1, $city, $state, $eMail, $password, $passwordRepeat)
 	{

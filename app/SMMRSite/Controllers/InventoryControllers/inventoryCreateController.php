@@ -1,7 +1,7 @@
 <?php namespace SMMRSite\Controllers\InventoryControllers;
 
 use SMMRSite\Models\InventoryModels\InventoryClass;
-use SMMRSite\Models\InventoryModels\InventoryDAOClass;
+use SMMRSite\DAOs\InventoryDAOClass;
 
 class InventoryCreateController
 {
@@ -38,7 +38,7 @@ class InventoryCreateController
     
       if($this->inventory->formInventoryCreateCheck($this->inventory->getSKUNumber(), $this->inventory->getProductName(), $this->inventory->getProductionCompanyName(), $this->inventory->getBarCodeNumber(), $this->inventory->getDateAcquired(), $this->inventory->getCondition(), $this->inventory->getSKUNumberErr(), $this->inventory->getProductNameErr(), $this->inventory->getProductionCompanyNameErr(), $this->inventory->getGenreErr(), $this->inventory->getBarCodeNumberErr(), $this->inventory->getDateAcquiredErr(), $this->inventory->getConditionErr())=="FORM COMPLETE")
       {
-        return $this->inventoryDAO->createInventoryRecord($this->inventory->getSKUNumber(), $this->inventory->getProductName(), $this->inventory->getProductionCompanyName(), $this->inventory->getAction(), $this->inventory->getChildren(), $this->inventory->getComedy(), $this->inventory->getDocumentary(), $this->inventory->getDrama(), $this->inventory->getHorror(), $this->inventory->getMusicals(), $this->inventory->getRomance(), $this->inventory->getScienceFiction(), $this->inventory->getThriller(), $this->inventory->getBarCodeNumber(), $this->inventory->getDateAcquired(), $this->inventory->getCondition());
+        $this->inventoryDAO->createInventoryRecord($this->inventory, $this->inventory->getSKUNumber(), $this->inventory->getProductName(), $this->inventory->getProductionCompanyName(), $this->inventory->getAction(), $this->inventory->getChildren(), $this->inventory->getComedy(), $this->inventory->getDocumentary(), $this->inventory->getDrama(), $this->inventory->getHorror(), $this->inventory->getMusicals(), $this->inventory->getRomance(), $this->inventory->getScienceFiction(), $this->inventory->getThriller(), $this->inventory->getBarCodeNumber(), $this->inventory->getDateAcquired(), $this->inventory->getCondition());
       }
       }
   	}//functionClose

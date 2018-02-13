@@ -6,7 +6,7 @@ date_default_timezone_set("America/New_York");
 require_once __DIR__ . '/vendor/autoload.php';
 
 use SMMRSite\Models\CustomerModels\CustomerClass;
-use SMMRSite\Models\CustomerModels\CustomerDAOClass;
+use SMMRSite\DAOs\CustomerDAOClass;
 use SMMRSite\Controllers\CustomerControllers\AccountSearchController;
 
 use Symfony\Component\HttpFoundation\Request;

@@ -1,100 +1,75 @@
-<?php namespace SMMRSite\Models\InventoryModels;
+<?php namespace SMMRSite\DAOs;
 
-use SMMRSite\Models\DAOClass as DAOClass;
-use mysqli;
+use SMMRSite\DAOs\DAOClass;
+use SMMRSite\Models\InventoryModels\InventoryClass;
+use PDO;
 
 class InventoryDAOClass extends DAOClass
 {
 	public function __construct()
 	{
 		$this->serverName;
-		$this->userName;
-		$this->passwordServer;
-		$this->dbName;
+        $this->userName;
+        $this->passwordServer;
+        $this->dbName;
+        $this->conn;
 	}
 	//Inventory Methods
 
-	public function getCompanyNames($productionCompanyName)
+	public function getCompanyNames(InventoryClass $inventoryClass)
 	{
-		$conn= new \mysqli($this->getServerName(), $this->getUserName(), $this->getPasswordServer(), $this->getdbName());
-		if ($conn->connect_error)
-		{
-			die("Connection failed; " . $conn->connect_error);
-		}
+		$this->connect();
 
-		$sql = "SELECT productionCompanyName FROM ProductionCompany";
-		$result = $conn->query($sql);
-		if ($result->num_rows > 0) 
-		{
+		$sql= $this->conn->query("SELECT productionCompanyName FROM ProductionCompany");
 
+		if ($sql->rowCount() > 0)
+		{  
    		// output data of each row concatenate into one string
-		$companyNames="";
-    	while($row = $result->fetch_assoc()) 
+		$companyNames= array();
+    	while($row= $sql->fetch()) 
     		{
-        	$companyNames.= "<option value='".$row["productionCompanyName"]."'";
-        	if($productionCompanyName == $row["productionCompanyName"]) 
-        		{
-        			$companyNames.= 'selected';
-        		}
-        	$companyNames.= ">".$row["productionCompanyName"]."</option>";
+        	   array_push($companyNames, $row["productionCompanyName"]);
     		}
-    	return $companyNames;
-		} 
-		$conn->close();
+    	$inventoryClass->setCompanyNamesArray($companyNames);
+        } 
+
+		$this->close();
 	}
 
 	public function getGenres($action, $children, $comedy, $documentary, $drama, $horror, $musicals, $romance, $scienceFiction, $thriller)
 	{
 		$genres= array($action, $children, $comedy, $documentary, $drama, $horror, $musicals, $romance, $scienceFiction, $thriller);
 		
-		$conn= new \mysqli($this->getServerName(), $this->getUserName(), $this->getPasswordServer(), $this->getdbName());
-		if ($conn->connect_error)
-		{
-			die("Connection failed; " . $conn->connect_error);
-		}
+	    $this->connect();
 
-		$sql = "SELECT genreName FROM Genre";
-		$result = $conn->query($sql);
+		$sql = $this->conn->query("SELECT genreName FROM Genre");
 		
-		if ($result->num_rows > 0) 
+		if ($sql->rowCount() > 0) 
 		{
    		// output data of each row concatenate into one string
-    	$genres="";
-    	while($row = $result->fetch_assoc()) 
+    	$genresArray=array();
+    	while($row= $sql->fetch()) 
     		{
-        	$genres.= "<input type='checkbox' name='".lcfirst(str_replace(' ','',$row["genreName"]))."' value='".lcfirst(str_replace(' ','',$row["genreName"]))."' ";
-        	foreach($genres as $genre)
-        	{
-        		if ($genre == $row["genreName"]) 
-        		{
-        			$genres.= 'checked';
-        		}
-        	}
-        	$genres.= ">".$row["genreName"]."<br>";
+        	array_push($genresArray, array("lowerCase"=>lcfirst(str_replace(' ','',$row["genreName"])), "normal"=>$row["genreName"]));
     		}
-    	return $genres;
+    	return $genresArray;
 		} 
-		$conn->close();
+        $this->close();
 	}
 
-	public function createInventoryRecord ($sKUNumber, $productName, $productionCompanyName, $action, $children, $comedy, $documentary, $drama, $horror, $musicals, $romance, $scienceFiction, $thriller, $barCodeNumber, $dateAcquired, $condition)
+	public function createInventoryRecord (InventoryClass $inventoryClass, $sKUNumber, $productName, $productionCompanyName, $action, $children, $comedy, $documentary, $drama, $horror, $musicals, $romance, $scienceFiction, $thriller, $barCodeNumber, $dateAcquired, $condition)
 	{
-		$conn= new \mysqli($this->getServerName(), $this->getUserName(), $this->getPasswordServer(), $this->getdbName());
-		
-		if ($conn->connect_error)
-		{
-			die("Connection failed; " . $conn->connect_error);
-		}
+		$this->connect();
 
-		$sqlDuplicateCheck = "SELECT barCodeNumber FROM Inventory WHERE barCodeNumber= '".$barCodeNumber."'";
-		$result = $conn->query($sqlDuplicateCheck);
+		$sqlDuplicateCheck = $this->conn->query("SELECT barCodeNumber FROM Inventory WHERE barCodeNumber= '".$barCodeNumber."'");
 
-		if ($result->num_rows > 0) 
+		if ($sqlDuplicateCheck->rowCount() > 0) 
 		{
    		// output 
-    	while($row = $result->fetch_assoc()) 
+    	while($row = $sqlDuplicateCheck->fetch()) 
     		{
-        	return "<h1 style='color:red;'>Barcode Number ".$row["barCodeNumber"]." already exists.</h1>";
+        	   $inventoryClass->setCreateInventoryErr("Barcode Number ".$row["barCodeNumber"]." already exists.");
+               return;
     		}
 		} 
 		
@@ -102,67 +77,81 @@ class InventoryDAOClass extends DAOClass
 		{
 			//Pull PK for Production Company
 			$pcIdQuery = "SELECT pcID FROM ProductionCompany WHERE productionCompanyName = '".$productionCompanyName."'"; 
-			$pcIDResult = $conn->query($pcIdQuery);
-			$rowPcID= $pcIDResult->fetch_assoc();
+			$pcIDResult = $this->conn->query($pcIdQuery);
+			$rowPcID= $pcIDResult->fetch();
 			$pcID=$rowPcID["pcID"];
 
 			//Check if Product Already Exists - Insert new PrID if necessary, pull PrID if it already exists
 			$productCheckQuery = "SELECT prID FROM Product WHERE sKUNumber= '".$sKUNumber."'";
-			$productCheckResult = $conn->query($productCheckQuery);
+			$productCheckResult = $this->conn->query($productCheckQuery);
 			
-			if ($productCheckResult->num_rows > 0)
+			if ($productCheckResult->rowCount() > 0)
 			{	
-				$rowPrID= $productCheckResult->fetch_assoc();
+				$rowPrID= $productCheckResult->fetch();
 				$prID = $rowPrID["prID"];
 			}
 			
 			else
 			{
-				$productInsertQuery= "INSERT INTO Product (prID, pcID, sKUNumber, name) VALUES (NULL, ".$pcID.",'".$sKUNumber."', '".$productName."')";
-				$productInsertResult = $conn->query($productInsertQuery);
-				
-				$productCheckResult = $conn->query($productCheckQuery);
-				while($rowPrID= $productCheckResult->fetch_assoc())
+				$productInsertQuery= "INSERT INTO Product (prID, pcID, sKUNumber, name) VALUES (NULL, :pcID, :sKUNumber, :productName)";
+				$productInsertResult = $this->conn->prepare($productInsertQuery);
+                $productInsertResult->execute(array(
+                    ':pcID' => $pcID,
+                    ':sKUNumber' => $sKUNumber,
+                    ':productName' => $productName
+                    ));
+
+				$productCheckResult = $this->conn->query($productCheckQuery);
+				while($rowPrID= $productCheckResult->fetch())
 					{
 						$prID= $rowPrID["prID"];
 					}
 
 				//Insert into ProductGenreJoin table	
 				$gnIDSearchQuery= "SELECT gnID FROM Genre WHERE genreName in ('".$action."', '".$children."', '".$comedy."', '".$documentary."', '".$drama."', '".$horror."', '".$musicals."', '".$romance."', '".$scienceFiction."', '".$thriller."')";
-				$gnIDSearchResult= $conn->query($gnIDSearchQuery);
-				$gnIDRowCount= mysqli_num_rows($gnIDSearchResult);
+				$gnIDSearchResult= $this->conn->query($gnIDSearchQuery);
+				$gnIDRowCount= $gnIDSearchResult->rowCount();
 			
 				//BUG HERE!!!!!
-				while($gnIDRow= mysqli_fetch_array($gnIDSearchResult))
+				while($gnIDRow= $gnIDSearchResult->fetch(PDO::FETCH_ASSOC))
     				{
-        				$productGenreJoinInsertQuery= "INSERT INTO ProductGenreJoin (prID, gnID) VALUES (".$prID.",".$gnIDRow["gnID"].")";
-        				$conn->query($productGenreJoinInsertQuery);
+        				$productGenreJoinInsertQuery= "INSERT INTO ProductGenreJoin (prID, gnID) VALUES (:prID, :gnID)";
+        				$productGenreJoinInsertResult= $this->conn->prepare($productGenreJoinInsertQuery);
+                        $productGenreJoinInsertResult->execute(array(
+                            ':prID' => $prID,
+                            ':gnID' => $gnIDRow["gnID"]
+                            ));
     				}
 			}
 			
 			//Insert into Inventory table
-			$inventoryInsertQuery= "INSERT INTO Inventory (inID, prID, barCodeNumber, dateAcquired, productCondition) VALUES (NULL,".$prID.",'".$barCodeNumber."', '".$dateAcquired."', '".$condition."')";
+			$inventoryInsertQuery= "INSERT INTO Inventory (inID, prID, barCodeNumber, dateAcquired, productCondition) VALUES (NULL, :prID, :barCodeNumber, :dateAcquired, :condition)";
+            $inventoryInsertResult= $this->conn->prepare($inventoryInsertQuery);
 
-			if ($conn->query($inventoryInsertQuery) === TRUE) 
+			if ($inventoryInsertResult->execute(array(
+                ':prID' => $prID,
+                ':barCodeNumber' => $barCodeNumber,
+                ':dateAcquired' => $dateAcquired,
+                ':condition' => $condition
+                )) === TRUE) 
 			{
-    			return "<h1 style='color:#16e059;'>New Inventory and Product record created successfully</h1>";
+    			$inventoryClass->setCreateInventoryOutput("New Inventory and Product record created successfully");
+                return;
 			} 
 			else
 			{
-    			return "Error: " . $inventoryInsertQuery . "<br>" . $conn->error;
+    			$inventoryClass->setCreateInventoryErr("Error: ".$inventoryInsertQuery." ".$this->conn->errorInfo());
+                return;
 			}
 			
 		}
-		$conn->close();
+		$this->close();
 	} //Function Close
 
-	public function productInventoryQuery($sKUNumber, $productName)
+	public function productInventoryQuery(InventoryClass $inventoryClass, $sKUNumber, $productName)
 	{
-		$conn= new \mysqli($this->getServerName(), $this->getUserName(), $this->getPasswordServer(), $this->getdbName());
-		if ($conn->connect_error)
-		{
-			die("Connection failed; " . $conn->connect_error);
-		}
+		$this->connect();
+
 		//0
 		if (empty($sKUNumber) and empty($productName))
 			{
@@ -172,7 +161,7 @@ class InventoryDAOClass extends DAOClass
 					JOIN ProductGenreJoin pgj ON p.prID = pgj.prID
 					JOIN Genre g ON pgj.gnID = g.gnID
 					JOIN ProductionCompany pc ON p.pcID = pc.pcID";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 
 		elseif (isset($sKUNumber) and empty($productName))
@@ -184,7 +173,7 @@ class InventoryDAOClass extends DAOClass
 					JOIN Genre g ON pgj.gnID = g.gnID
 					JOIN ProductionCompany pc ON p.pcID = pc.pcID
 						WHERE p.sKUNumber = '".$sKUNumber."'";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 	
 		elseif (empty($sKUNumber) and isset($productName))
@@ -197,7 +186,7 @@ class InventoryDAOClass extends DAOClass
 					JOIN ProductionCompany pc ON p.pcID = pc.pcID
 						WHERE p.name = '".$productName."'
 						ORDER BY i.barCodeNumber";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 
 		else
@@ -210,30 +199,16 @@ class InventoryDAOClass extends DAOClass
 					JOIN ProductionCompany pc ON p.pcID = pc.pcID
 						WHERE p.sKUNumber = '".$sKUNumber."' 
 						AND p.name = '".$productName."'";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 		//check statement
 		//echo $sql;
 
-        $productInventoryTable="";
-		if ($result->num_rows > 0) 
+		if ($result->rowCount() > 0) 
 		{
-			$productInventoryTable.= "<h1 style='color:#16e059;'>Results:</h1>";
-			$productInventoryTable.= "<table border='1' style='width:100%'>
-				<tr>
-					<th>Barcode Number</th>
-					<th>SKU Number</th>
-					<th>Product Name</th>
-					<th>Production Company Name</th>
-					<th>Genre(s)</th>
-					<th>Date Acquired</th>
-					<th>Condition</th>
-				</tr>
-			";
-
     		// Inserts data in each row into an Array
     		$recordArray = array();
-    		while(($row = $result->fetch_assoc())) 
+    		while(($row = $result->fetch())) 
     		{
     			array_push($recordArray, array("barCodeNumber"=>$row["barCodeNumber"],"sKUNumber"=> $row["sKUNumber"],"name"=>$row["name"],"productionCompanyName"=>$row["productionCompanyName"],"genreName"=>$row["genreName"],"dateAcquired"=>$row["dateAcquired"], "productCondition"=>$row["productCondition"]));
     		}
@@ -259,42 +234,32 @@ class InventoryDAOClass extends DAOClass
 
     		//Checks which products have repeating rows and only displays the one with all genres concatenated
     		$count=0;
+            $inventoryInformationArray=array();
     		for($x=0;$x<count($recordArray);$x++)
     		{
     			if(!in_array($x,$dontDisplay) and $count<=100)
     			{
-    				$productInventoryTable.= "<tr>
-					<td>".$recordArray[$x]["barCodeNumber"]."</td>
-					<td>".$recordArray[$x]["sKUNumber"]."</td>
-					<td>".$recordArray[$x]["name"]."</td>
-					<td>".$recordArray[$x]["productionCompanyName"]."</td>
-					<td>".$recordArray[$x]["genreName"]."</td>
-					<td>".$recordArray[$x]["dateAcquired"]."</td>
-					<td>".$recordArray[$x]["productCondition"]."</td>
-				</tr>";
-				$count= $count++;
+    				array_push($inventoryInformationArray, array("barCodeNumber"=>$recordArray[$x]["barCodeNumber"], "sKUNumber"=>$recordArray[$x]["sKUNumber"], "name"=>$recordArray[$x]["name"], "productionCompanyName"=>$recordArray[$x]["productionCompanyName"], "genreName"=>$recordArray[$x]["genreName"], "dateAcquired"=>$recordArray[$x]["dateAcquired"], "productCondition"=>$recordArray[$x]["productCondition"]));
+				    $count= $count++;
 				}
     		}
-    		$productInventoryTable.="</table>";
-            return $productInventoryTable;
+    		$inventoryClass->setInventoryInformationArray($inventoryInformationArray);
+            return;
 		} 
 		
 		else 
 		{
-    		$productInventoryTable.="<h1 style='color:red;'>No Results</h1>";
-            return $productInventoryTable;
+    		$inventoryClass->setInventoryInformationErr("No Results");
+            return;
 		}
 		
-		$conn->close();
+		$this->close();
 	} //Function Close
 
-	public function companyGenreQuery($productionCompanyName, $action, $children, $comedy, $documentary, $drama, $horror, $musicals, $romance, $scienceFiction, $thriller)
+	public function companyGenreQuery(InventoryClass $inventoryClass, $productionCompanyName, $action, $children, $comedy, $documentary, $drama, $horror, $musicals, $romance, $scienceFiction, $thriller)
 	{
-		$conn= new \mysqli($this->getServerName(), $this->getUserName(), $this->getPasswordServer(), $this->getdbName());
-		if ($conn->connect_error)
-		{
-			die("Connection failed; " . $conn->connect_error);
-		}
+		$this->connect();
+
 		//0
 		if ($productionCompanyName=="" and empty($action) and empty($children) and empty($comedy) and empty($documentary) and empty($drama) and empty($horror) and empty($musicals) and empty($romance) and empty($scienceFiction) and empty($thriller))
 			{
@@ -304,7 +269,7 @@ class InventoryDAOClass extends DAOClass
 					JOIN ProductGenreJoin pgj ON p.prID = pgj.prID
 					JOIN Genre g ON pgj.gnID = g.gnID
 					JOIN ProductionCompany pc ON p.pcID = pc.pcID";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 
 		elseif ($productionCompanyName!="" and empty($action) and empty($children) and empty($comedy) and empty($documentary) and empty($drama) and empty($horror) and empty($musicals) and empty($romance) and empty($scienceFiction) and empty($thriller))
@@ -316,7 +281,7 @@ class InventoryDAOClass extends DAOClass
 					JOIN Genre g ON pgj.gnID = g.gnID
 					JOIN ProductionCompany pc ON p.pcID = pc.pcID
 					WHERE productionCompanyName = '".$productionCompanyName."'";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 	
 		elseif ($productionCompanyName=="" and (isset($action) or isset($children) or isset($comedy) or isset($documentary) or isset($drama) or isset($horror) or isset($musicals) or isset($romance) or isset($scienceFiction) or isset($thriller)))
@@ -328,7 +293,7 @@ class InventoryDAOClass extends DAOClass
 					JOIN Genre g ON pgj.gnID = g.gnID
 					JOIN ProductionCompany pc ON p.pcID = pc.pcID
 					WHERE genreName in ('".$action."', '".$children."', '".$comedy."', '".$documentary."', '".$drama."', '".$horror."', '".$musicals."', '".$romance."', '".$scienceFiction."', '".$thriller."')";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 
 		else
@@ -341,30 +306,16 @@ class InventoryDAOClass extends DAOClass
 					JOIN ProductionCompany pc ON p.pcID = pc.pcID
 					WHERE productionCompanyName = '".$productionCompanyName."'
 					AND genreName in ('".$action."', '".$children."', '".$comedy."', '".$documentary."', '".$drama."', '".$horror."', '".$musicals."', '".$romance."', '".$scienceFiction."', '".$thriller."')";
-				$result = $conn->query($sql);
+				$result = $this->conn->query($sql);
 			}
 		//check statement
 		//echo $sql;
 
-        $productInventoryTable="";
-		if ($result->num_rows > 0) 
+		if ($result->rowCount() > 0) 
 		{
-			$productInventoryTable.= "<h1 style='color:#16e059;'>Results:</h1>";
-			$productInventoryTable.= "<table border='1' style='width:100%'>
-				<tr>
-					<th>Barcode Number</th>
-					<th>SKU Number</th>
-					<th>Product Name</th>
-					<th>Production Company</th>
-					<th>Genre(s)</th>
-					<th>Date Acquired</th>
-					<th>Condition</th>
-				</tr>
-			";
-
     		// Inserts data in each row into an Array
     		$recordArray = array();
-    		while(($row = $result->fetch_assoc())) 
+    		while(($row = $result->fetch())) 
     		{
     			array_push($recordArray, array("barCodeNumber"=>$row["barCodeNumber"],"sKUNumber"=> $row["sKUNumber"],"name"=>$row["name"],"productionCompanyName"=>$row["productionCompanyName"], "genreName"=>$row["genreName"],"dateAcquired"=>$row["dateAcquired"], "productCondition"=>$row["productCondition"]));
     		}
@@ -389,38 +340,31 @@ class InventoryDAOClass extends DAOClass
     		}
 
     		//Checks which products have repeating rows and only displays the one with all genres concatenated
-    		$count=0;
-    		for($x=0;$x<count($recordArray);$x++)
-    		{
-    			if(!in_array($x,$dontDisplay) and $count<=100)
-    			{
-    				$productInventoryTable.= "<tr>
-					<td>".$recordArray[$x]["barCodeNumber"]."</td>
-					<td>".$recordArray[$x]["sKUNumber"]."</td>
-					<td>".$recordArray[$x]["name"]."</td>
-					<td>".$recordArray[$x]["productionCompanyName"]."</td>
-					<td>".$recordArray[$x]["genreName"]."</td>
-					<td>".$recordArray[$x]["dateAcquired"]."</td>
-					<td>".$recordArray[$x]["productCondition"]."</td>
-				</tr>";
-				$count= $count++;
-				}
-    		}
-    		$productInventoryTable.= "</table>";
-            return $productInventoryTable;
+            $count=0;
+            $inventoryInformationArray=array();
+            for($x=0;$x<count($recordArray);$x++)
+            {
+                if(!in_array($x,$dontDisplay) and $count<=100)
+                {
+                    array_push($inventoryInformationArray, array("barCodeNumber"=>$recordArray[$x]["barCodeNumber"], "sKUNumber"=>$recordArray[$x]["sKUNumber"], "name"=>$recordArray[$x]["name"], "productionCompanyName"=>$recordArray[$x]["productionCompanyName"], "genreName"=>$recordArray[$x]["genreName"], "dateAcquired"=>$recordArray[$x]["dateAcquired"], "productCondition"=>$recordArray[$x]["productCondition"]));
+                    $count= $count++;
+                }
+            }
+            $inventoryClass->setInventoryInformationArray($inventoryInformationArray);
+            return;
 		} 
 		
 		else 
 		{
-    		$productInventoryTable.= "<h1 style='color:red;'>No Results</h1>";
-            return $productInventoryTable;
+            $inventoryClass->setInventoryInformationErr("No Results");
+            return;
 		}
 		
-		$conn->close();
+		$this->close();
 	} //Function Close
 
 } //Class Close
 
 ?>
 
-<!-- php Desktop/PHP/SantaMonicaMovieRentalsSILEX/app/SMMRSite/Models/InventoryModels/inventoryDAOClass.php -->
+<!-- php Desktop/PHP/SantaMonicaMovieRentalsSILEX/app/SMMRSite/DAOs/inventoryDAOClass.php -->

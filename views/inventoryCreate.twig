@@ -8,7 +8,8 @@ Inventory Create
 
 {% block main %}
 
-{{ returnContent | raw }}
+        <h1 style='color:red;'>{{ createInventoryError }}</h1>
+        <h1 style='color:#16e059;'>{{ createInventoryOutput }}</h1>
 
         <h1>Create Inventory/Product</h1>
         <h2 class="error">* required field.</h2>
@@ -25,12 +26,16 @@ Inventory Create
                 <br><br>
                 Production Company Name: 
                 <select name="productionCompanyName">
-                {{ companyNames | raw }}
+                {% for companyName in companyNames %}
+                    <option value='{{ companyName }}' {% if companyName == productionCompanyName %} 'selected' {% endif %}>{{ companyName }}</option>
+                {% endfor %}
                 </select>
                 <span class="error">* {{ productionCompanyNameError }}</span>
                 <br><br>
                 Product Genres:<br>
-                {{ genres | raw }}
+                {% for genre in genres %}
+                    <input type='checkbox' name='{{ genre.lowerCase }}' value='{{ genre.lowerCase }}' {% if genre.normal != '' %} 'checked' {% endif %} > {{ genre.normal }}<br>
+                {% endfor %}
                 <span class="error">* {{ genreError }}</span>
                 <br>
             </fieldset>

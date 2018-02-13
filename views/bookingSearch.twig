@@ -8,13 +8,51 @@ Booking Search
 
 {% block main %}
 
-    {{ returnContent | raw }}
+    <h1 style='color:red;'> {{ duplicateError }} {{ returnBookingError}} {{ bookingSearchErr }} </h1>
+    "<h1 style='color:#16e059;'> {{ returnBookingOutput }} </h1>
+
+    {% if bookingSearchArray is not empty %}
+    <span class='notice'>* Search displays first 10 Results</span>
+    <form action= "{{ url }}/index.php/bookingSearch" autocomplete='on' method='get'>
+    <h1 style='color:#16e059;'>Results:</h1>
+    <table border='1' style='width:100%'>
+        <tr>
+            <th>Booking Number</th>
+            <th>Date of Booking</th>
+            <th>Date Returned</th>
+            <th>Barcode Number</th>
+            <th>SKU Number</th>
+            <th>Product Name</th>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>E-Mail</th>
+            <th>Select?</th>
+        </tr>
+    {% for item in bookingSearchArray %}
+    <tr>
+        <td>{{ item.bkID }}</td>
+        <td>{{ item.dateOfBooking }}</td>
+        <td>{{ item.dateReturned }}</td>
+        <td><input type='text' name='barCode{{ item.count }}' value='{{ item.barCodeNumber }}' disabled></td>
+        <td>{{ item.sKUNumber }}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.lastName }}</td>
+        <td>{{ item.firstName }}</td>
+        <td>{{ item.eMail }}</td>
+        <td><input type='submit' name='barCodeSelect{{ item.count }}' value='Select'></td>
+    </tr>
+    {% endfor %}
+    </table>
+    </form>
+    {% endif %}
 
     <h1>Return Inventory Item(s)</h1>
         <form action= "{{ url }}/index.php/bookingSearch" autocomplete="on" method="get">
             <fieldset>
                 <legend>Inventory</legend>
-                {{ bookingInventory | raw }}
+                {% for inventory in bookingInventory %}
+                    Inventory Barcode Number: <input type='text' name='barCodeNumber{{ inventory.index }}' value='{{ inventory.barCodeNumber }}'><span class='error'> *{{ inventory.barCodeNumberErr }}</span><br><br>
+                {% endfor %}
             <input type="submit" name="addItem" value="Add Item">
             <input type="submit" name="removeItem" value="Remove Item">
             </fieldset>

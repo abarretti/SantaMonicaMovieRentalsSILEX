@@ -8,7 +8,8 @@ Account Create
 
 {% block main %}
 
-        {{ returnContent | raw }}
+        <h1 style='color:red;'>{{ createCustomerError }}</h1>
+        <h1 style='color:#16e059;'>{{ createCustomerOutput }}</h1>
 
         <h1>Create Account</h1>
         <h2 class="error">* required field.</h2>
@@ -124,16 +125,16 @@ Account Create
             <fieldset>
                 <legend>Additional Information</legend>
                 Interests:<br>
-                <input type="checkbox" name="action" value="action" {% if action =="UNHEX('1')" %} 'checked' {% endif %}>Action<br>
-                <input type="checkbox" name="children" value="children" {% if children =="UNHEX('1')" %} 'checked' {% endif %}>Children<br>
-                <input type="checkbox" name="comedy" value="comedy" {% if comedy =="UNHEX('1')" %} 'checked' {% endif %}>Comedy<br>
-                <input type="checkbox" name="documentary" value="documentary" {% if documentary =="UNHEX('1')" %} 'checked' {% endif %}>Documentary<br>
-                <input type="checkbox" name="drama" value="drama" {% if drama =="UNHEX('1')" %} 'checked' {% endif %}>Drama<br>
-                <input type="checkbox" name="horror" value="horror" {% if horror =="UNHEX('1')" %} 'checked' {% endif %}>Horror<br>
-                <input type="checkbox" name="musicals" value="musicals" {% if musicals =="UNHEX('1')" %} 'checked' {% endif %}>Musicals<br>
-                <input type="checkbox" name="romance" value="romance" {% if romance=="UNHEX('1')" %} 'checked' {% endif %}>Romance<br>
-                <input type="checkbox" name="scienceFiction" value="scienceFiction" {% if scienceFiction=="UNHEX('1')" %} 'checked' {% endif %}>Science Fiction<br>
-                <input type="checkbox" name="thriller" value="thriller" {% if thriller =="UNHEX('1')" %} 'checked' {% endif %}>Thriller<br>
+                <input type="checkbox" name="action" value="action" {% if action == 1 %} 'checked' {% endif %}>Action<br>
+                <input type="checkbox" name="children" value="children" {% if children == 1 %} 'checked' {% endif %}>Children<br>
+                <input type="checkbox" name="comedy" value="comedy" {% if comedy == 1 %} 'checked' {% endif %}>Comedy<br>
+                <input type="checkbox" name="documentary" value="documentary" {% if documentary == 1 %} 'checked' {% endif %}>Documentary<br>
+                <input type="checkbox" name="drama" value="drama" {% if drama == 1 %} 'checked' {% endif %}>Drama<br>
+                <input type="checkbox" name="horror" value="horror" {% if horror == 1 %} 'checked' {% endif %}>Horror<br>
+                <input type="checkbox" name="musicals" value="musicals" {% if musicals == 1 %} 'checked' {% endif %}>Musicals<br>
+                <input type="checkbox" name="romance" value="romance" {% if romance== 1 %} 'checked' {% endif %}>Romance<br>
+                <input type="checkbox" name="scienceFiction" value="scienceFiction" {% if scienceFiction== 1 %} 'checked' {% endif %}>Science Fiction<br>
+                <input type="checkbox" name="thriller" value="thriller" {% if thriller == 1 %} 'checked' {% endif %}>Thriller<br>
                 Notes:
                 <textarea name="notes" rows="10" cols="50" value="{{ notes }}"></textarea>
                 <br><br>

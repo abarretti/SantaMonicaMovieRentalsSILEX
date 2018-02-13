@@ -3,7 +3,7 @@
 use SMMRSite\Models\BookingModels\BookingClass;
 use SMMRSite\Models\CustomerModels\CustomerClass;
 use SMMRSite\Models\InventoryModels\InventoryClass;
-use SMMRSite\Models\BookingModels\BookingDAOClass;
+use SMMRSite\DAOs\BookingDAOClass;
 
 class BookingSearchController
 {
@@ -53,9 +53,7 @@ class BookingSearchController
 
         $_SESSION["returnDate"]= $this->booking->getReturnDate();
         $_SESSION["returnDateErr"]= $this->booking->getReturnDateErr();
-
-        $_SESSION["barCodeNumberDuplicateErr"]= $this->booking->getBarCodeNumberErr("d");
-        echo $_SESSION["barCodeNumberDuplicateErr"];
+        
         $_SESSION["barCodeNumber1Err"]= $this->booking->getBarCodeNumberErr(1);
         $_SESSION["barCodeNumber2Err"]= $this->booking->getBarCodeNumberErr(2);
         $_SESSION["barCodeNumber3Err"]= $this->booking->getBarCodeNumberErr(3);
@@ -66,10 +64,11 @@ class BookingSearchController
         $_SESSION["barCodeNumber8Err"]= $this->booking->getBarCodeNumberErr(8);
         $_SESSION["barCodeNumber9Err"]= $this->booking->getBarCodeNumberErr(9);
         $_SESSION["barCodeNumber10Err"]= $this->booking->getBarCodeNumberErr(10);
+        $_SESSION["barCodeNumberDuplicateErr"]= $this->booking->getBarCodeNumberErr("d");
 
         if ($this->booking->formSubmitReturnCheck($_SESSION["barCodeNumber1"], $_SESSION["returnDate"], $_SESSION["returnDateErr"], $_SESSION["barCodeNumberDuplicateErr"], $_SESSION["barCodeNumber1Err"], $_SESSION["barCodeNumber2Err"], $_SESSION["barCodeNumber3Err"], $_SESSION["barCodeNumber4Err"], $_SESSION["barCodeNumber5Err"], $_SESSION["barCodeNumber6Err"], $_SESSION["barCodeNumber7Err"], $_SESSION["barCodeNumber8Err"], $_SESSION["barCodeNumber9Err"], $_SESSION["barCodeNumber10Err"])=="FORM COMPLETE")
         {
-          return $this->bookingDAO->returnBooking($_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"], $_SESSION["returnDate"]);
+          $this->bookingDAO->returnBooking($this->booking, $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"], $_SESSION["returnDate"]);
         }
       }
 
@@ -88,7 +87,7 @@ class BookingSearchController
         $_SESSION["inventoryCount"]= $this->booking->getInventoryCount();
         
           //clears variable if inventory item is removed
-          $this->booking->clearBarCodeNumber($_SESSION["inventoryCount"]);
+          $this->booking->clearBarCodeNumber($this->booking->getInventoryCount());
           $_SESSION["barCodeNumber1"]= $this->booking->getBarCodeNumber(1);
           $_SESSION["barCodeNumber2"]= $this->booking->getBarCodeNumber(2);
           $_SESSION["barCodeNumber3"]= $this->booking->getBarCodeNumber(3);
@@ -99,34 +98,39 @@ class BookingSearchController
           $_SESSION["barCodeNumber8"]= $this->booking->getBarCodeNumber(8);
           $_SESSION["barCodeNumber9"]= $this->booking->getBarCodeNumber(9);
           $_SESSION["barCodeNumber10"]= $this->booking->getBarCodeNumber(10);
+          
           $_SESSION["barCodeNumber1Err"]= $this->booking->getBarCodeNumberErr(1);
-        $_SESSION["barCodeNumber2Err"]= $this->booking->getBarCodeNumberErr(2);
-        $_SESSION["barCodeNumber3Err"]= $this->booking->getBarCodeNumberErr(3);
-        $_SESSION["barCodeNumber4Err"]= $this->booking->getBarCodeNumberErr(4);
-        $_SESSION["barCodeNumber5Err"]= $this->booking->getBarCodeNumberErr(5);
-        $_SESSION["barCodeNumber6Err"]= $this->booking->getBarCodeNumberErr(6);
-        $_SESSION["barCodeNumber7Err"]= $this->booking->getBarCodeNumberErr(7);
-        $_SESSION["barCodeNumber8Err"]= $this->booking->getBarCodeNumberErr(8);
-        $_SESSION["barCodeNumber9Err"]= $this->booking->getBarCodeNumberErr(9);
-        $_SESSION["barCodeNumber10Err"]= $this->booking->getBarCodeNumberErr(10);
+          $_SESSION["barCodeNumber2Err"]= $this->booking->getBarCodeNumberErr(2);
+          $_SESSION["barCodeNumber3Err"]= $this->booking->getBarCodeNumberErr(3);
+          $_SESSION["barCodeNumber4Err"]= $this->booking->getBarCodeNumberErr(4);
+          $_SESSION["barCodeNumber5Err"]= $this->booking->getBarCodeNumberErr(5);
+          $_SESSION["barCodeNumber6Err"]= $this->booking->getBarCodeNumberErr(6);
+          $_SESSION["barCodeNumber7Err"]= $this->booking->getBarCodeNumberErr(7);
+          $_SESSION["barCodeNumber8Err"]= $this->booking->getBarCodeNumberErr(8);
+          $_SESSION["barCodeNumber9Err"]= $this->booking->getBarCodeNumberErr(9);
+          $_SESSION["barCodeNumber10Err"]= $this->booking->getBarCodeNumberErr(10);
       }
       
       //Customer Search
       if (isset($_GET["submitCustomer"]) and $this->customer->formBookingCustomerSearchCheck($this->customer->getLastNameErr(), $this->customer->getAddress1Err(), $this->customer->getPhoneNumberErr())=="FORM COMPLETE")
       {
-        $_SESSION["inventoryList"]= $this->bookingDAO->bookingSearchCustomerQuery($this->customer->getLastName(), $this->customer->getDateOfBirth(), $this->customer->getAddress1(), $this->customer->getPhoneNumber());
+        $this->bookingDAO->bookingSearchCustomerQuery($this->booking, $this->customer->getLastName(), $this->customer->getDateOfBirth(), $this->customer->getAddress1(), $this->customer->getPhoneNumber());
+        $_SESSION["bookingSearchArray"]= $this->booking->getBookingSearchArray();
+        $_SESSION["bookingSearchErr"]= $this->booking->getBookingSearchErr();
       }
       
       //Inventory Search
       if (isset($_GET["submitProduct"]) and $this->inventory->formBookingInventorySearchCheck($this->inventory->getBarCodeNumberErr(), $this->inventory->getSKUNumberErr(), $this->inventory->getProductNameErr())=="FORM COMPLETE")
       {
-        $_SESSION["inventoryList"]= $this->bookingDAO->bookingSearchInventoryQuery($this->inventory->getBarCodeNumber(), $this->inventory->getSKUNumber(), $this->inventory->getProductName());
+        $this->bookingDAO->bookingSearchInventoryQuery($this->booking, $this->inventory->getBarCodeNumber(), $this->inventory->getSKUNumber(), $this->inventory->getProductName());
+        $_SESSION["bookingSearchArray"]= $this->booking->getBookingSearchArray();
+        $_SESSION["bookingSearchErr"]= $this->booking->getBookingSearchErr();
       }
 
       //Sets Booking BarCode from Customer and Inventory Searches
       if (isset($_GET["barCodeSelect0"]))
       {
-        $this->booking->setBarCodeNumber($_SESSION["inventoryList"][0],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
+        $this->booking->setBarCodeNumber($_SESSION["bookingSearchArray"][0]["barCodeNumber"],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
         $_SESSION["barCodeNumber1"]= $this->booking->getBarCodeNumber(1);
         $_SESSION["barCodeNumber2"]= $this->booking->getBarCodeNumber(2);
         $_SESSION["barCodeNumber3"]= $this->booking->getBarCodeNumber(3);
@@ -137,11 +141,12 @@ class BookingSearchController
         $_SESSION["barCodeNumber8"]= $this->booking->getBarCodeNumber(8);
         $_SESSION["barCodeNumber9"]= $this->booking->getBarCodeNumber(9);
         $_SESSION["barCodeNumber10"]= $this->booking->getBarCodeNumber(10);
+        $_SESSION["bookingSearchArray"]= $this->booking->setBookingSearchArray(NULL);
       }
 
       if (isset($_GET["barCodeSelect1"]))
       {
-        $this->booking->setBarCodeNumber($_SESSION["inventoryList"][1],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
+        $this->booking->setBarCodeNumber($_SESSION["bookingSearchArray"][1]["barCodeNumber"],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
         $_SESSION["barCodeNumber1"]= $this->booking->getBarCodeNumber(1);
         $_SESSION["barCodeNumber2"]= $this->booking->getBarCodeNumber(2);
         $_SESSION["barCodeNumber3"]= $this->booking->getBarCodeNumber(3);
@@ -152,11 +157,12 @@ class BookingSearchController
         $_SESSION["barCodeNumber8"]= $this->booking->getBarCodeNumber(8);
         $_SESSION["barCodeNumber9"]= $this->booking->getBarCodeNumber(9);
         $_SESSION["barCodeNumber10"]= $this->booking->getBarCodeNumber(10);
+        $_SESSION["bookingSearchArray"]= $this->booking->setBookingSearchArray(NULL);
       }
 
       if (isset($_GET["barCodeSelect2"]))
       {
-        $this->booking->setBarCodeNumber($_SESSION["inventoryList"][2],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
+        $this->booking->setBarCodeNumber($_SESSION["bookingSearchArray"][2]["barCodeNumber"],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
         $_SESSION["barCodeNumber1"]= $this->booking->getBarCodeNumber(1);
         $_SESSION["barCodeNumber2"]= $this->booking->getBarCodeNumber(2);
         $_SESSION["barCodeNumber3"]= $this->booking->getBarCodeNumber(3);
@@ -167,11 +173,12 @@ class BookingSearchController
         $_SESSION["barCodeNumber8"]= $this->booking->getBarCodeNumber(8);
         $_SESSION["barCodeNumber9"]= $this->booking->getBarCodeNumber(9);
         $_SESSION["barCodeNumber10"]= $this->booking->getBarCodeNumber(10);
+        $_SESSION["bookingSearchArray"]= $this->booking->setBookingSearchArray(NULL);
       }
 
       if (isset($_GET["barCodeSelect3"]))
       {
-        $this->booking->setBarCodeNumber($_SESSION["inventoryList"][3],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
+        $this->booking->setBarCodeNumber($_SESSION["bookingSearchArray"][3]["barCodeNumber"],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
         $_SESSION["barCodeNumber1"]= $this->booking->getBarCodeNumber(1);
         $_SESSION["barCodeNumber2"]= $this->booking->getBarCodeNumber(2);
         $_SESSION["barCodeNumber3"]= $this->booking->getBarCodeNumber(3);
@@ -182,11 +189,12 @@ class BookingSearchController
         $_SESSION["barCodeNumber8"]= $this->booking->getBarCodeNumber(8);
         $_SESSION["barCodeNumber9"]= $this->booking->getBarCodeNumber(9);
         $_SESSION["barCodeNumber10"]= $this->booking->getBarCodeNumber(10);
+        $_SESSION["bookingSearchArray"]= $this->booking->setBookingSearchArray(NULL);
       }
 
       if (isset($_GET["barCodeSelect4"]))
       {
-        $this->booking->setBarCodeNumber($_SESSION["inventoryList"][4],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
+        $this->booking->setBarCodeNumber($_SESSION["bookingSearchArray"][4]["barCodeNumber"],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
         $_SESSION["barCodeNumber1"]= $this->booking->getBarCodeNumber(1);
         $_SESSION["barCodeNumber2"]= $this->booking->getBarCodeNumber(2);
         $_SESSION["barCodeNumber3"]= $this->booking->getBarCodeNumber(3);
@@ -197,11 +205,12 @@ class BookingSearchController
         $_SESSION["barCodeNumber8"]= $this->booking->getBarCodeNumber(8);
         $_SESSION["barCodeNumber9"]= $this->booking->getBarCodeNumber(9);
         $_SESSION["barCodeNumber10"]= $this->booking->getBarCodeNumber(10);
+        $_SESSION["bookingSearchArray"]= $this->booking->setBookingSearchArray(NULL);
       }
 
       if (isset($_GET["barCodeSelect5"]))
       {
-        $this->booking->setBarCodeNumber($_SESSION["inventoryList"][5],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
+        $this->booking->setBarCodeNumber($_SESSION["bookingSearchArray"][5]["barCodeNumber"],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
         $_SESSION["barCodeNumber1"]= $this->booking->getBarCodeNumber(1);
         $_SESSION["barCodeNumber2"]= $this->booking->getBarCodeNumber(2);
         $_SESSION["barCodeNumber3"]= $this->booking->getBarCodeNumber(3);
@@ -212,11 +221,12 @@ class BookingSearchController
         $_SESSION["barCodeNumber8"]= $this->booking->getBarCodeNumber(8);
         $_SESSION["barCodeNumber9"]= $this->booking->getBarCodeNumber(9);
         $_SESSION["barCodeNumber10"]= $this->booking->getBarCodeNumber(10);
+        $_SESSION["bookingSearchArray"]= $this->booking->setBookingSearchArray(NULL);
       }
 
       if (isset($_GET["barCodeSelect6"]))
       {
-        $this->booking->setBarCodeNumber($_SESSION["inventoryList"][6],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
+        $this->booking->setBarCodeNumber($_SESSION["bookingSearchArray"][6]["barCodeNumber"],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
         $_SESSION["barCodeNumber1"]= $this->booking->getBarCodeNumber(1);
         $_SESSION["barCodeNumber2"]= $this->booking->getBarCodeNumber(2);
         $_SESSION["barCodeNumber3"]= $this->booking->getBarCodeNumber(3);
@@ -227,11 +237,12 @@ class BookingSearchController
         $_SESSION["barCodeNumber8"]= $this->booking->getBarCodeNumber(8);
         $_SESSION["barCodeNumber9"]= $this->booking->getBarCodeNumber(9);
         $_SESSION["barCodeNumber10"]= $this->booking->getBarCodeNumber(10);
+        $_SESSION["bookingSearchArray"]= $this->booking->setBookingSearchArray(NULL);
       }
 
       if (isset($_GET["barCodeSelect7"]))
       {
-        $this->booking->setBarCodeNumber($_SESSION["inventoryList"][7], $_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
+        $this->booking->setBarCodeNumber($_SESSION["bookingSearchArray"][7]["barCodeNumber"], $_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
         $_SESSION["barCodeNumber1"]= $this->booking->getBarCodeNumber(1);
         $_SESSION["barCodeNumber2"]= $this->booking->getBarCodeNumber(2);
         $_SESSION["barCodeNumber3"]= $this->booking->getBarCodeNumber(3);
@@ -242,11 +253,12 @@ class BookingSearchController
         $_SESSION["barCodeNumber8"]= $this->booking->getBarCodeNumber(8);
         $_SESSION["barCodeNumber9"]= $this->booking->getBarCodeNumber(9);
         $_SESSION["barCodeNumber10"]= $this->booking->getBarCodeNumber(10);
+        $_SESSION["bookingSearchArray"]= $this->booking->setBookingSearchArray(NULL);
       }
 
       if (isset($_GET["barCodeSelect8"]))
       {
-        $this->booking->setBarCodeNumber($_SESSION["inventoryList"][8],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
+        $this->booking->setBarCodeNumber($_SESSION["bookingSearchArray"][8]["barCodeNumber"],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
         $_SESSION["barCodeNumber1"]= $this->booking->getBarCodeNumber(1);
         $_SESSION["barCodeNumber2"]= $this->booking->getBarCodeNumber(2);
         $_SESSION["barCodeNumber3"]= $this->booking->getBarCodeNumber(3);
@@ -257,11 +269,12 @@ class BookingSearchController
         $_SESSION["barCodeNumber8"]= $this->booking->getBarCodeNumber(8);
         $_SESSION["barCodeNumber9"]= $this->booking->getBarCodeNumber(9);
         $_SESSION["barCodeNumber10"]= $this->booking->getBarCodeNumber(10);
+        $_SESSION["bookingSearchArray"]= $this->booking->setBookingSearchArray(NULL);
       }
 
       if (isset($_GET["barCodeSelect9"]))
       {
-        $this->booking->setBarCodeNumber($_SESSION["inventoryList"][9],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
+        $this->booking->setBarCodeNumber($_SESSION["bookingSearchArray"][9]["barCodeNumber"],$_SESSION["inventoryCount"], $_SESSION["barCodeNumber1"], $_SESSION["barCodeNumber2"], $_SESSION["barCodeNumber3"], $_SESSION["barCodeNumber4"], $_SESSION["barCodeNumber5"], $_SESSION["barCodeNumber6"], $_SESSION["barCodeNumber7"], $_SESSION["barCodeNumber8"], $_SESSION["barCodeNumber9"], $_SESSION["barCodeNumber10"]);
         $_SESSION["barCodeNumber1"]= $this->booking->getBarCodeNumber(1);
         $_SESSION["barCodeNumber2"]= $this->booking->getBarCodeNumber(2);
         $_SESSION["barCodeNumber3"]= $this->booking->getBarCodeNumber(3);
@@ -272,9 +285,12 @@ class BookingSearchController
         $_SESSION["barCodeNumber8"]= $this->booking->getBarCodeNumber(8);
         $_SESSION["barCodeNumber9"]= $this->booking->getBarCodeNumber(9);
         $_SESSION["barCodeNumber10"]= $this->booking->getBarCodeNumber(10);
+        $_SESSION["bookingSearchArray"]= $this->booking->setBookingSearchArray(NULL);
       }
     }
   	}//functionClose
 
 }//class end
 ?>
+
+<!--  php Desktop/PHP/SantaMonicaMovieRentalsSILEX/app/SMMRSite/Controllers/BookingControllers/bookingSearchController.php --> 

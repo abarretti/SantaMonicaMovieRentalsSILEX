@@ -8,8 +8,34 @@ Inventory Search
 
 {% block main %}
         
-        {{ returnContent | raw }}
+    <h1 style='color:red;'>{{ inventoryInformationError }}</h1>
     
+    {% if inventoryInformationArray is not empty %}
+    <h1 style='color:#16e059;'>Results:</h1>
+    <table border='1' style='width:100%'>
+        <tr>
+            <th>Barcode Number</th>
+            <th>SKU Number</th>
+            <th>Product Name</th>
+            <th>Production Company Name</th>
+            <th>Genre(s)</th>
+            <th>Date Acquired</th>
+            <th>Condition</th>
+        </tr>
+    {% for item in inventoryInformationArray %}
+        <tr>
+            <td>{{ item.barCodeNumber }}</td>
+            <td>{{ item.sKUNumber }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.productionCompanyName }}</td>
+            <td>{{ item.genreName }}</td>
+            <td>{{ item.dateAcquired }}</td>
+            <td>{{ item.productCondition }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+    {% endif %}
+
         <h1>Search Inventory</h1>
         <h2 class="notice">* field is subject to input restrictions.</h2>
         <form action= "{{ url }}/index.php/inventorySearch" autocomplete="on" method="get">
@@ -32,12 +58,15 @@ Inventory Search
             <legend>Search by Production Company Name or Genre</legend>
                 Production Company Name:
                 <select name="productionCompanyName">
-                <option value="" {{ productionCompanyName }}></option>
-                {{ companyNames | raw }}
+                {% for companyName in companyNames %}
+                    <option value='{{ companyName }}' {% if companyName == productionCompanyName %} 'selected' {% endif %}>{{ companyName }}</option>
+                {% endfor %}
                 </select>
                 <br><br>
                 Genre:<br>
-                {{ genres | raw }}
+                {% for genre in genres %}
+                    <input type='checkbox' name='{{ genre.lowerCase }}' value='{{ genre.lowerCase }}' {% if genre.normal != '' %} 'checked' {% endif %} > {{ genre.normal }}<br>
+                {% endfor %}
                 <br><br>
             </fieldset>
                 <input type="submit" name="submitProductionGenre" value="Submit">
